@@ -4,160 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
   <title>Deploy Project Introduction</title>
-  <style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #e0e0e0;
-  color: #444;
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  width: 100%; /* Ensure the container takes full width */
-  max-width: 900px;
-  margin: 60px auto;
-  padding: 30px;
-  background-color: #fff;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  position: relative;
-}
-
-button {
-  border: none;
-  padding: 30px 30px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #ffffff;
-}
-
-
-h1 {
-  color: #222;
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-}
-
-p {
-  line-height: 1.8;
-  margin-bottom: 20px;
-}
-
-a {
-  text-decoration: none;
-  font-weight: bold;
-}
-
-a:hover {
-  color: #555;
-  text-decoration: underline;
-}
-
-.hidden {
-  display: none;
-}
-
-.title {
-  color: #0067E6;
-  font-size: 2.5rem;
-  margin-bottom: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.icon-circle {
-    width: 100px;  /* Adjust the size as needed */
-    height: 100px; /* Adjust the size as needed */
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0f0f0; /* Optional: add a background color */
-    /* position: absolute; */
-    /* margin: 0 400px; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-}
-
-.icon-circle img {
-    width: 90%;
-    height: auto;  /* Maintain aspect ratio */
-    object-fit: contain;  /* Adjust to fit within the circle */
-    object-position: center;  /* Center the image */
-    transform: translateY(60%);  /* Move the image down by 10% */
-}
-
-@media screen and (max-width: 600px) {
-  .container {
-    padding: 0;
-    margin: 30px auto;
-    width: 95%;
-  }
-
-  button {
-    top: 30px;
-    right: 30px;
-    padding: 0;
-    font-size: 1rem;
-
-  }
-
-  h1 {
-    font-size: 1.8rem;
-    text-align: center;
-  }
-
-  .title {
-    font-size: 1rem;
-    height: auto;
-    padding: 10px;
-    width: 95%;
-    /* center */
-    margin: 0 auto;
-  }
-  p {
-    font-size: 0.8rem;
-    margin: 15px;
-  }
-
-  .title {
-    font-size: 1rem;
-    height: auto;
-    padding: 15px;
-  }
-
-  .content {
-    margin-top: 40px;
-
-  }
-
-  a {
-    font-size: 0.8rem;
-    color: #0067E6;
-  }
-  .icon-circle {
-    width: 50px;  /* Adjust the size as needed */
-    height: 50px; /* Adjust the size as needed */
-    margin-bottom: 10px;
-  }
-  .icon-circle img {
-    height: auto;  /* Maintain aspect ratio */
-    object-fit: contain;  /* Adjust to fit within the circle */
-    object-position: center;  /* Center the image */
-    transform: translateY(20%);  /* Move the image down by 10% */
-  }
-}
-  </style>
 </head>
 
 <body>
@@ -165,63 +13,52 @@ a:hover {
     <button id="toggleLanguage">FR</button>
 
     <!-- English Content -->
-     <div class="content">
-    <div id="en">
-      <h1 class="title">sacenpapier.synology.me</h1>
-      <p>
-        This Web Service is hosted on a Synology NAS, offering a robust platform for deploying various web applications. This setup facilitates the reliable and secure deployment of projects.
-      </p>
-      <p>
-        For more information about my projects and to explore my portfolio, please visit:
-      </p>
-      <p>
-        <a href="https://jeanmichelbb.github.io/" target="_blank">https://jeanmichelbb.github.io/</a>
-      </p>
-      <p>
-        Stay tuned for more updates and additional projects that will be introduced under the Deploy initiative. Your feedback and suggestions are always welcome!
-      </p>
+    <div class="content">
+      <div id="en">
+        <h1 class="title">sacenpapier.synology.me</h1>
+        <p>
+          This Web Service is hosted on a Synology NAS, offering a robust platform for deploying various web
+          applications. This setup facilitates the reliable and secure deployment of projects.
+        </p>
+        <p>
+          For more information about my projects and to explore my portfolio, please visit:
+        </p>
+        <p>
+          <a href="https://jeanmichelbb.github.io/" target="_blank">https://jeanmichelbb.github.io/</a>
+        </p>
+        <p>
+          Stay tuned for more updates and additional projects that will be introduced under the Deploy initiative. Your
+          feedback and suggestions are always welcome!
+        </p>
+      </div>
+
+      <!-- French Content -->
+      <div id="fr" class="hidden">
+        <h1 class="title">sacenpapier.synology.me</h1>
+        <p>
+          Ce service web est hébergé sur un NAS Synology, offrant une plateforme robuste pour déployer diverses
+          applications web. Cette configuration facilite le déploiement fiable et sécurisé de plusieurs projets.
+        </p>
+        <p>
+          Pour plus d'informations sur mes projets et pour explorer mon portfolio, veuillez visiter :
+        </p>
+        <p>
+          <a href="https://jeanmichelbb.github.io/" target="_blank">https://jeanmichelbb.github.io/</a>
+        </p>
+        <p>
+          Restez à l'écoute pour plus de mises à jour et de projets supplémentaires qui seront introduits dans le cadre
+          de l'initiative Deploy. Vos retours et suggestions sont toujours les bienvenus !
+        </p>
+      </div>
+
     </div>
 
-    <!-- French Content -->
-    <div  id="fr" class="hidden">
-      <h1 class="title">sacenpapier.synology.me</h1>
-      <p>
-        Ce service web est hébergé sur un NAS Synology, offrant une plateforme robuste pour déployer diverses applications web. Cette configuration facilite le déploiement fiable et sécurisé de plusieurs projets.
-      </p>
-      <p>
-        Pour plus d'informations sur mes projets et pour explorer mon portfolio, veuillez visiter :
-      </p>
-      <p>
-        <a href="https://jeanmichelbb.github.io/" target="_blank">https://jeanmichelbb.github.io/</a>
-      </p>
-      <p>
-        Restez à l'écoute pour plus de mises à jour et de projets supplémentaires qui seront introduits dans le cadre de l'initiative Deploy. Vos retours et suggestions sont toujours les bienvenus !
-      </p>
+    <div class="icon-circle">
+      <img src="./kisspng-paper-bag-shopping-bag-kraft-paper-5c63a49330be76.4996403015500340671997.png"
+        alt="Deploy Logo" class="title">
     </div>
-    
   </div>
-  
-  <div class="icon-circle">
-    <img src="./kisspng-paper-bag-shopping-bag-kraft-paper-5c63a49330be76.4996403015500340671997.png" alt="Deploy Logo" class="title">
-  </div>
-</div>
-  <script>
-    document.getElementById('toggleLanguage').addEventListener('click', function() {
-        const enContent = document.getElementById('en');
-        const frContent = document.getElementById('fr');
-        const isEnglishVisible = !enContent.classList.contains('hidden');
-        
-        if (isEnglishVisible) {
-            enContent.classList.add('hidden');
-            frContent.classList.remove('hidden');
-            this.textContent = 'EN';
-        } else {
-            enContent.classList.remove('hidden');
-            frContent.classList.add('hidden');
-            this.textContent = 'FR';
-        }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 
 </html>
