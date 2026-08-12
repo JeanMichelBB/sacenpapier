@@ -20,6 +20,40 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Postmortems
+
+Postmortems are markdown files in `content/postmortems/`, loaded at request time by `src/lib/postmortems.ts` — no code changes needed to add one.
+
+**Add a new postmortem:**
+
+```bash
+npm run new-postmortem -- "Incident Title"
+```
+
+This creates `content/postmortems/YYYY-MM-DD-incident-title.md` pre-filled with frontmatter and section stubs:
+
+```markdown
+---
+title: Incident Title
+date: 2026-08-12
+duration:
+tags: [ ]
+---
+
+## What happened
+
+## Root cause
+
+## Fix
+
+## Prevention
+```
+
+Fill in `duration`, `tags` (comma-separated, e.g. `[k3s, Longhorn]`), and the section bodies — you can rename or add `##` sections freely, the detail page renders whatever's there. Save the file and it shows up on the site automatically:
+
+- The homepage feed (`Hub.tsx` → `PostmortemCard`) lists every postmortem, using the first section as the preview summary.
+- Each one gets its own page at `/postmortems/<slug>` with a "More postmortems" list of related posts, ranked by shared tags.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

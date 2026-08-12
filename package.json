@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "new-postmortem": "node scripts/new-postmortem.mjs"
   },
   "dependencies": {
     "next": "16.2.1",

@@ -52,15 +52,4 @@ export const projects: Project[] = [
     tags: ["React", "FastAPI", "Docker", "CI/CD"],
     status: "live",
   },
-  {
-    name: "HomeLab",
-    slug: "homelab",
-    description: {
-      en: "Live infrastructure overview — physical hardware, k3s cluster, Tailscale mesh, and Cloudflare routing.",
-      fr: "Aperçu d'infrastructure en direct — matériel physique, cluster k3s, maillage Tailscale et routage Cloudflare.",
-    },
-    url: "https://homelab.sacenpapier.org",
-    tags: ["React", "FastAPI", "k3s", "Tailscale"],
-    status: "live",
-  },
 ];
