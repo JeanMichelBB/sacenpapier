@@ -5,8 +5,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { projects } from "@/data/projects";
 import { Postmortem } from "@/lib/postmortems";
+import { Update } from "@/lib/updates";
 import { ProjectCard } from "@/components/ProjectCard";
-import { PostmortemCard } from "@/components/PostmortemCard";
+import { PostCard } from "@/components/PostCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { GithubLink } from "@/components/GithubLink";
 import { PodBadge } from "@/components/PodBadge";
@@ -26,9 +27,10 @@ function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
   return null;
 }
 
-export function Hub({ postmortems }: { postmortems: Postmortem[] }) {
+export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updates: Update[] }) {
   const [crushed, setCrushed] = useState(false);
   const [notFound, setNotFound] = useState<string | null>(null);
+  const [feedTab, setFeedTab] = useState<"postmortems" | "updates">("postmortems");
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-white">
@@ -112,16 +114,43 @@ export function Hub({ postmortems }: { postmortems: Postmortem[] }) {
           </p>
         </section>
 
-        {/* Postmortems */}
+        {/* Postmortems / Updates */}
         <section className="mt-12">
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-600">
-            Postmortems
-          </h2>
-          <div className="flex flex-col gap-3">
-            {postmortems.map((postmortem) => (
-              <PostmortemCard key={postmortem.slug} postmortem={postmortem} />
-            ))}
+          <div className="mb-4 flex items-center border-b border-zinc-200 dark:border-zinc-800">
+            <button
+              onClick={() => setFeedTab("postmortems")}
+              className={`flex-1 border-b-2 pb-3 text-xs font-medium uppercase tracking-widest transition-colors ${
+                feedTab === "postmortems"
+                  ? "border-zinc-900 text-zinc-900 dark:border-zinc-200 dark:text-zinc-200"
+                  : "border-transparent text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
+              }`}
+            >
+              Postmortems
+            </button>
+            <button
+              onClick={() => setFeedTab("updates")}
+              className={`flex-1 border-b-2 pb-3 text-xs font-medium uppercase tracking-widest transition-colors ${
+                feedTab === "updates"
+                  ? "border-zinc-900 text-zinc-900 dark:border-zinc-200 dark:text-zinc-200"
+                  : "border-transparent text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
+              }`}
+            >
+              Updates
+            </button>
           </div>
+          {feedTab === "postmortems" ? (
+            <div className="flex flex-col gap-3">
+              {postmortems.map((postmortem) => (
+                <PostCard key={postmortem.slug} post={postmortem} basePath="/postmortems" />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {updates.map((update) => (
+                <PostCard key={update.slug} post={update} basePath="/updates" />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Footer */}
