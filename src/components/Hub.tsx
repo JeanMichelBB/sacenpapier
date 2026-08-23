@@ -10,6 +10,8 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { PostCard } from "@/components/PostCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { GithubLink } from "@/components/GithubLink";
+import { LinkedinLink } from "@/components/LinkedinLink";
+import { EmailLink } from "@/components/EmailLink";
 import { PodBadge } from "@/components/PodBadge";
 
 function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
@@ -76,6 +78,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </div>
           <div className="flex items-center gap-2">
             <GithubLink />
+            <LinkedinLink />
+            <EmailLink />
             <ThemeToggle />
           </div>
         </header>
@@ -156,6 +160,20 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         {/* Footer */}
         <footer className="mt-16 flex flex-col items-center gap-3 text-xs text-zinc-500 dark:text-zinc-600">
           <PodBadge />
+          <div className="flex items-center gap-3">
+            <a href="mailto:jeanmichelbberube@gmail.com" className="hover:text-zinc-900 dark:hover:text-zinc-200">
+              jeanmichelbberube@gmail.com
+            </a>
+            <span className="text-zinc-300 dark:text-zinc-700">·</span>
+            <a
+              href="https://www.linkedin.com/in/jeanmichelbb/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-zinc-900 dark:hover:text-zinc-200"
+            >
+              LinkedIn
+            </a>
+          </div>
           Built with Next.js · Deployed on k3s
         </footer>
       </div>
