@@ -34,7 +34,9 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: jeanmichelbb/hub:latest
+          tags: |
+            jeanmichelbb/hub:latest
+            jeanmichelbb/hub:${{ github.sha }}
           cache-from: type=gha,scope=hub
           cache-to: type=gha,mode=max,scope=hub
 
