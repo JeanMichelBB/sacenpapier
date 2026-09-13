@@ -39,13 +39,3 @@ jobs:
             jeanmichelbb/hub:${{ github.sha }}
           cache-from: type=gha,scope=hub
           cache-to: type=gha,mode=max,scope=hub
-
-      - name: Deploy to k3s
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            sudo kubectl rollout restart deployment/hub
-            sudo kubectl rollout status deployment/hub --timeout=120s
