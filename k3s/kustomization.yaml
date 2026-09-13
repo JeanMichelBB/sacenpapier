@@ -7,4 +7,5 @@ resources:
 
 images:
   - name: jeanmichelbb/hub
-    newTag: latest
+    newTag: 6ba3e2fab35e1de8ee99c9cb6837cd9f286e8884
+    newName: jeanmichelbb/hub
