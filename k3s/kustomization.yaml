@@ -3,3 +3,8 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - ingress.yaml
+  - image-updater.yaml
+
+images:
+  - name: jeanmichelbb/hub
+    newTag: latest

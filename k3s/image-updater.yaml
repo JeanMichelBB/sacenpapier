@@ -1,0 +1,22 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: sacenpapier
+  namespace: argocd
+spec:
+  applicationRefs:
+    - namePattern: sacenpapier
+      images:
+        - alias: hub
+          imageName: jeanmichelbb/hub
+          commonUpdateSettings:
+            updateStrategy: newest-build
+            allowTags: "regexp:^[0-9a-f]{40}$"
+          manifestTargets:
+            kustomize:
+              name: jeanmichelbb/hub
+      writeBackConfig:
+        method: "git:secret:argocd/git-creds-github"
+        gitConfig:
+          branch: main
+          writeBackTarget: "kustomization:."
