@@ -1,0 +1,24 @@
+# hub has no backend/DB/secrets and no metrics NodePort, so this is the simple case: only
+# Traefik needs to reach it.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-traefik-to-hub
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: hub
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: traefik
+      ports:
+        - protocol: TCP
+          port: 3000
