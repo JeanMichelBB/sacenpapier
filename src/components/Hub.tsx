@@ -46,6 +46,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
   const [backendPing, setBackendPing] = useState<{ name: string; ms: number | null; ok: boolean }[] | null>(null);
   const [pingTick, setPingTick] = useState(0);
+  const [pinging, setPinging] = useState(true);
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
@@ -65,6 +66,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     if (activeRole !== "backend") return;
     let cancelled = false;
     function poll() {
+      setPinging(true);
       fetch("/api/backend-latency")
         .then((r) => r.json())
         .then((d) => {
@@ -72,7 +74,10 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           setBackendPing(d.apps);
           setPingTick((t) => t + 1);
         })
-        .catch(() => {});
+        .catch(() => {})
+        .finally(() => {
+          if (!cancelled) setPinging(false);
+        });
     }
     poll();
     const interval = setInterval(poll, 10000);
@@ -112,7 +117,12 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
       </h2>
       {activeRole === "backend" && (() => {
         const ping = backendPing?.find((p) => p.name === selectedProject.name) ?? null;
-        const loading = ping === null;
+        const spinner = (
+          <svg className="h-7 w-7 animate-spin text-zinc-300 dark:text-zinc-700" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+        );
         return (
           <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mb-4 flex items-center gap-2">
@@ -126,35 +136,38 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             </div>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <div>
-                <div key={`ms-${pingTick}`} className="animate-fade-in text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">
-                  {loading ? (
-                    <span className="inline-block h-7 w-14 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
-                  ) : ping.ok ? (
-                    `${ping.ms}ms`
+                <div className="flex h-8 items-center">
+                  {pinging ? (
+                    spinner
                   ) : (
-                    <span className="text-red-500 dark:text-red-400">—</span>
+                    <span key={`ms-${pingTick}`} className="animate-fade-in text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">
+                      {ping?.ok ? `${ping.ms}ms` : <span className="text-red-500 dark:text-red-400">—</span>}
+                    </span>
                   )}
                 </div>
                 <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatResponse}</div>
               </div>
               <div>
-                <div key={`status-${pingTick}`} className={`animate-fade-in text-2xl font-bold font-mono tabular-nums ${loading ? "" : ping.ok ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
-                  {loading ? (
-                    <span className="inline-block h-7 w-14 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
-                  ) : ping.ok ? (
-                    t.backendStatLive
+                <div className="flex h-8 items-center">
+                  {pinging ? (
+                    spinner
                   ) : (
-                    "—"
+                    <span
+                      key={`status-${pingTick}`}
+                      className={`animate-fade-in text-2xl font-bold font-mono tabular-nums ${ping?.ok ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}
+                    >
+                      {ping?.ok ? t.backendStatLive : "—"}
+                    </span>
                   )}
                 </div>
                 <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatStatus}</div>
               </div>
               <div>
-                <div className="text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.endpoints}</div>
+                <div className="flex h-8 items-center text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.endpoints}</div>
                 <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatEndpoints}</div>
               </div>
               <div>
-                <div className="text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.commits}</div>
+                <div className="flex h-8 items-center text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.commits}</div>
                 <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatCommits}</div>
               </div>
             </div>
@@ -177,6 +190,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                 project={project}
                 selected={project.slug === selectedProject.slug}
                 onSelect={() => setSelectedSlug(project.slug)}
+                hideStatus={activeRole === "backend"}
               />
             ))}
           </div>
