@@ -158,12 +158,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </div>
           <div className="flex flex-col items-end gap-2">
             <div className="flex items-center gap-2">
-              <Link
-                href="/about"
-                className="flex h-8 items-center rounded-lg border border-zinc-200 px-3 text-xs font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-              >
-                {t.aboutNav}
-              </Link>
               <GithubLink />
               <LinkedinLink />
               <EmailLink />
@@ -176,8 +170,21 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </div>
         </header>
 
-        {/* Role toggle */}
-        <div className="mb-8 flex flex-wrap gap-2">
+        {/* Page nav + role toggle */}
+        <div className="mb-8 flex flex-wrap items-center gap-2">
+          <Link
+            href="/about"
+            className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+          >
+            {t.aboutNav}
+          </Link>
+          <Link
+            href="/infrastructure"
+            className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+          >
+            {t.infrastructure}
+          </Link>
+          <span className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
           {(
             [
               [null, t.roleAll],

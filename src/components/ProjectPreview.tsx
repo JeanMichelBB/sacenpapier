@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { Project } from "@/data/projects";
 import { Lang } from "@/lib/strings";
 
@@ -45,14 +48,50 @@ export function ProjectPreview({ project, lang, liveLabel, sourceLabel }: Props)
           </a>
         </div>
       </div>
-      <div className="relative aspect-[9/16] overflow-hidden bg-zinc-50 sm:aspect-video dark:bg-zinc-950">
-        <iframe
-          key={project.url}
-          src={project.url}
-          title={project.name}
-          className="absolute inset-0 h-full w-full border-0"
-        />
-      </div>
+      <ScaledFrame src={project.url} title={project.name} />
+    </div>
+  );
+}
+
+const DESKTOP_REF = { w: 1280, h: 720 };
+const MOBILE_REF = { w: 390, h: 693 };
+
+function ScaledFrame({ src, title }: { src: string; title: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [ref, setRef] = useState(DESKTOP_REF);
+
+  useEffect(() => {
+    function update() {
+      const isDesktop = window.matchMedia("(min-width: 640px)").matches;
+      const next = isDesktop ? DESKTOP_REF : MOBILE_REF;
+      setRef(next);
+      if (containerRef.current) {
+        setScale(containerRef.current.clientWidth / next.w);
+      }
+    }
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative aspect-[9/16] overflow-hidden bg-zinc-50 sm:aspect-video dark:bg-zinc-950"
+    >
+      <iframe
+        key={src}
+        src={src}
+        title={title}
+        style={{
+          width: ref.w,
+          height: ref.h,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+          border: "none",
+        }}
+      />
     </div>
   );
 }
