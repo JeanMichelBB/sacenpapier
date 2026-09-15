@@ -8,6 +8,7 @@ import { projects, type Role } from "@/data/projects";
 import { Postmortem } from "@/lib/postmortems";
 import { Update } from "@/lib/updates";
 import { ProjectCard } from "@/components/ProjectCard";
+import { ProjectPreview } from "@/components/ProjectPreview";
 import { PostCard } from "@/components/PostCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -39,6 +40,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [lang, setLang] = useState<Lang>("en");
   const [activeRole, setActiveRole] = useState<Role | "infra" | null>(null);
+  const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
@@ -65,6 +67,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         })
       : projects;
 
+  const selectedProject = sortedProjects.find((p) => p.slug === selectedSlug) ?? sortedProjects[0];
+
   const postmortemTags = Array.from(new Set(postmortems.flatMap((p) => p.tags))).sort();
   const visiblePostmortems = activeTag
     ? postmortems.filter((p) => p.tags.includes(activeTag))
@@ -75,11 +79,17 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
       <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest text-zinc-500">
         {t.projects}
       </h2>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="mb-4 grid gap-3 sm:grid-cols-2">
         {sortedProjects.map((project) => (
-          <ProjectCard key={project.slug} project={project} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
+          <ProjectCard
+            key={project.slug}
+            project={project}
+            selected={project.slug === selectedProject.slug}
+            onSelect={() => setSelectedSlug(project.slug)}
+          />
         ))}
       </div>
+      <ProjectPreview project={selectedProject} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
     </section>
   );
 
@@ -88,18 +98,16 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
       <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-500">
         {t.infrastructure}
       </h2>
-      <a
-        href="https://homelab.sacenpapier.org"
-        target="_blank"
-        rel="noopener noreferrer"
+      <Link
+        href="/infrastructure"
         className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
       >
         <span className="relative flex h-1.5 w-1.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
         </span>
-        homelab.sacenpapier.org
-      </a>
+        sacenpapier.org/infrastructure
+      </Link>
       <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-600">
         {t.infrastructureDesc}
       </p>
