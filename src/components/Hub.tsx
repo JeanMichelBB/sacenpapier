@@ -110,33 +110,57 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
       <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest text-zinc-500">
         {t.projects}
       </h2>
-      {activeRole === "backend" && (
-        <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-          <div className="mb-4 flex items-center gap-2">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
-            </span>
-            <span className="text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatLatency}</span>
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {(backendPing ?? [{ name: "x", ms: null, ok: true }, { name: "PopRoom", ms: null, ok: true }, { name: "BotWhy", ms: null, ok: true }, { name: "Aperçu", ms: null, ok: true }]).map((app) => (
-              <div key={app.name}>
-                <div key={`${app.name}-${pingTick}`} className="animate-fade-in text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">
-                  {app.ms === null ? (
+      {activeRole === "backend" && (() => {
+        const ping = backendPing?.find((p) => p.name === selectedProject.name) ?? null;
+        const loading = ping === null;
+        return (
+          <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="mb-4 flex items-center gap-2">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
+              </span>
+              <span className="text-xs text-zinc-400 dark:text-zinc-600">
+                {selectedProject.name} — {t.backendStatLatency}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div>
+                <div key={`ms-${pingTick}`} className="animate-fade-in text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">
+                  {loading ? (
                     <span className="inline-block h-7 w-14 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
-                  ) : app.ok ? (
-                    `${app.ms}ms`
+                  ) : ping.ok ? (
+                    `${ping.ms}ms`
                   ) : (
                     <span className="text-red-500 dark:text-red-400">—</span>
                   )}
                 </div>
-                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{app.name}</div>
+                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatResponse}</div>
               </div>
-            ))}
+              <div>
+                <div key={`status-${pingTick}`} className={`animate-fade-in text-2xl font-bold font-mono tabular-nums ${loading ? "" : ping.ok ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
+                  {loading ? (
+                    <span className="inline-block h-7 w-14 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+                  ) : ping.ok ? (
+                    t.backendStatLive
+                  ) : (
+                    "—"
+                  )}
+                </div>
+                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatStatus}</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.endpoints}</div>
+                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatEndpoints}</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.commits}</div>
+                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatCommits}</div>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {activeRole === "frontend" ? (
         <div className="flex flex-col gap-6">

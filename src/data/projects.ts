@@ -10,6 +10,10 @@ export type Project = {
   status: "live" | "wip" | "archived";
   /** Roles this project best demonstrates, most relevant first. Drives the homepage role toggle's sort order. */
   focus: Role[];
+  /** API route count, counted from the real repo's route decorators. */
+  endpoints: number;
+  /** Commit count on main, from the real repo. */
+  commits: number;
 };
 
 export const projects: Project[] = [
@@ -25,6 +29,8 @@ export const projects: Project[] = [
     tags: ["React", "TypeScript", "FastAPI", "MySQL", "Docker"],
     status: "live",
     focus: ["full-stack", "backend"],
+    endpoints: 53,
+    commits: 117,
   },
   {
     name: "PopRoom",
@@ -38,6 +44,8 @@ export const projects: Project[] = [
     tags: ["React", "FastAPI", "WebSockets", "Canvas"],
     status: "live",
     focus: ["frontend", "full-stack"],
+    endpoints: 2,
+    commits: 38,
   },
   {
     name: "BotWhy",
@@ -51,6 +59,8 @@ export const projects: Project[] = [
     tags: ["React", "FastAPI", "OpenRouter", "Stripe", "OAuth"],
     status: "live",
     focus: ["backend", "full-stack"],
+    endpoints: 37,
+    commits: 208,
   },
   {
     name: "Aperçu",
@@ -64,5 +74,7 @@ export const projects: Project[] = [
     tags: ["React", "FastAPI", "MySQL", "JWT", "Docker", "CI/CD"],
     status: "live",
     focus: ["backend", "full-stack"],
+    endpoints: 79,
+    commits: 86,
   },
 ];
