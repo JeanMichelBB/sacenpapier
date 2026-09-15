@@ -16,12 +16,26 @@ spec:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
           effect: NoSchedule
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: hub
+                topologyKey: kubernetes.io/hostname
       containers:
         - name: hub
           image: jeanmichelbb/hub:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           resources:
             requests:
               cpu: 100m

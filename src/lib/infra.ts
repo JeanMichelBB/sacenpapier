@@ -33,5 +33,9 @@ async function get<T>(path: string): Promise<T> {
 export const infraApi = {
   nodes: () => get<InfraNode[]>("nodes"),
   k3s: () => get<K3sData>("k3s"),
-  pod: () => get<PodInfo>("pod"),
+  pod: async () => {
+    const res = await fetch(`/api/pod?t=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`pod ${res.status}`);
+    return res.json() as Promise<PodInfo>;
+  },
 };
