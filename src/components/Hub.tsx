@@ -302,7 +302,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             <button
               key={label}
               onClick={() => {
-                setActiveRole(activeRole === value ? null : value);
+                const alreadyActive = activeView === "projects" && activeRole === value;
+                setActiveRole(alreadyActive ? null : value);
                 setActiveView("projects");
               }}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
