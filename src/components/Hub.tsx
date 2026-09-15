@@ -38,7 +38,7 @@ function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
 export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updates: Update[] }) {
   const [crushed, setCrushed] = useState(false);
   const [notFound, setNotFound] = useState<string | null>(null);
-  const [updatesCount, setUpdatesCount] = useState(1);
+  const [updatesPage, setUpdatesPage] = useState(0);
   const [postmortemsPage, setPostmortemsPage] = useState(0);
   const [lang, setLang] = useState<Lang>("en");
   const [activeRole, setActiveRole] = useState<Role | null>(null);
@@ -85,8 +85,9 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     },
   ];
 
-  const pagedUpdates = updates.slice(0, updatesCount);
-  const hasMoreUpdates = pagedUpdates.length < updates.length;
+  const UPDATES_PER_PAGE = 4;
+  const updatesPageCount = Math.ceil(updates.length / UPDATES_PER_PAGE);
+  const pagedUpdates = updates.slice(updatesPage * UPDATES_PER_PAGE, (updatesPage + 1) * UPDATES_PER_PAGE);
   const POSTMORTEMS_PER_PAGE = 4;
   const postmortemsPageCount = Math.ceil(postmortems.length / POSTMORTEMS_PER_PAGE);
   const pagedPostmortems = postmortems.slice(
@@ -198,20 +199,41 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
 
           {updates[0] && (
             <div>
-              <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.updates}</h3>
-              <div className="flex flex-col gap-3">
+              <div className="mb-2 flex items-center justify-between">
+                <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.updates}</h3>
+                {updatesPageCount > 1 && (
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setUpdatesPage((p) => Math.max(0, p - 1))}
+                      disabled={updatesPage === 0}
+                      aria-label="Previous page"
+                      className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                      </svg>
+                    </button>
+                    <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600 tabular-nums">
+                      {updatesPage + 1} / {updatesPageCount}
+                    </span>
+                    <button
+                      onClick={() => setUpdatesPage((p) => Math.min(updatesPageCount - 1, p + 1))}
+                      disabled={updatesPage >= updatesPageCount - 1}
+                      aria-label="Next page"
+                      className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="flex min-h-[560px] flex-col gap-3">
                 {pagedUpdates.map((update) => (
                   <PostCard key={update.slug} post={update} basePath="/updates" />
                 ))}
               </div>
-              {hasMoreUpdates && (
-                <button
-                  onClick={() => setUpdatesCount((c) => c + 4)}
-                  className="mt-2 w-full rounded-lg border border-zinc-200 py-2 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-                >
-                  {t.nextPage}
-                </button>
-              )}
             </div>
           )}
         </div>
