@@ -67,6 +67,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     let cancelled = false;
     function poll() {
       setPinging(true);
+      const start = Date.now();
       fetch("/api/backend-latency")
         .then((r) => r.json())
         .then((d) => {
@@ -76,7 +77,10 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         })
         .catch(() => {})
         .finally(() => {
-          if (!cancelled) setPinging(false);
+          const remaining = 1000 - (Date.now() - start);
+          setTimeout(() => {
+            if (!cancelled) setPinging(false);
+          }, Math.max(0, remaining));
         });
     }
     poll();
