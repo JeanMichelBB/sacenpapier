@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,6 +47,66 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [backendPing, setBackendPing] = useState<{ name: string; ms: number | null; ok: boolean }[] | null>(null);
   const [pingTick, setPingTick] = useState(0);
   const [pinging, setPinging] = useState(true);
+  const didInit = useRef(false);
+
+  // Take manual control of scroll restoration — otherwise Next.js's own history
+  // scroll handling fights with (and wins over) our restoration below.
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+  }, []);
+
+  // Restore tab + page from the URL, and scroll position from sessionStorage — so
+  // browser back (and BackLink's router.back()) lands where you actually were.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
+    if (tab === "frontend" || tab === "backend") {
+      setActiveRole(tab);
+    } else if (tab === "infrastructure" || tab === "about") {
+      setActiveView(tab);
+    }
+    const pm = params.get("pm");
+    if (pm) setPostmortemsPage(Math.max(0, parseInt(pm, 10) - 1));
+    const up = params.get("up");
+    if (up) setUpdatesPage(Math.max(0, parseInt(up, 10) - 1));
+    didInit.current = true;
+
+    const savedScroll = sessionStorage.getItem("hub-scroll");
+    if (savedScroll) {
+      const y = parseInt(savedScroll, 10);
+      // Retried over a short window: Next.js's own navigation can reset scroll
+      // to top slightly after our effects run, so a single attempt isn't reliable.
+      const delays = [0, 50, 150, 300];
+      const timers = delays.map((ms) => setTimeout(() => window.scrollTo(0, y), ms));
+      return () => timers.forEach(clearTimeout);
+    }
+  }, []);
+
+  // Track scroll continuously rather than saving on unmount — Next.js resets
+  // scroll to top as part of navigating away, before an unmount cleanup would run,
+  // so an unmount-based save would only ever capture 0.
+  useEffect(() => {
+    function onScroll() {
+      sessionStorage.setItem("hub-scroll", String(window.scrollY));
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Keep the URL in sync with tab/page state via replaceState (no extra history
+  // entries), so whatever URL is current when you click away is what back restores.
+  useEffect(() => {
+    if (!didInit.current) return;
+    const tab = activeView !== "projects" ? activeView : (activeRole ?? "full-stack");
+    const params = new URLSearchParams();
+    if (tab !== "full-stack") params.set("tab", tab);
+    if (postmortemsPage > 0) params.set("pm", String(postmortemsPage + 1));
+    if (updatesPage > 0) params.set("up", String(updatesPage + 1));
+    const qs = params.toString();
+    window.history.replaceState(null, "", qs ? `/?${qs}` : "/");
+  }, [activeRole, activeView, postmortemsPage, updatesPage]);
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
