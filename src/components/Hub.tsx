@@ -39,6 +39,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [crushed, setCrushed] = useState(false);
   const [notFound, setNotFound] = useState<string | null>(null);
   const [updatesCount, setUpdatesCount] = useState(1);
+  const [postmortemsPage, setPostmortemsPage] = useState(0);
   const [lang, setLang] = useState<Lang>("en");
   const [activeRole, setActiveRole] = useState<Role | null>(null);
   const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure">("projects");
@@ -87,6 +88,12 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
 
   const pagedUpdates = updates.slice(0, updatesCount);
   const hasMoreUpdates = pagedUpdates.length < updates.length;
+  const POSTMORTEMS_PER_PAGE = 4;
+  const postmortemsPageCount = Math.ceil(postmortems.length / POSTMORTEMS_PER_PAGE);
+  const pagedPostmortems = postmortems.slice(
+    postmortemsPage * POSTMORTEMS_PER_PAGE,
+    (postmortemsPage + 1) * POSTMORTEMS_PER_PAGE
+  );
 
   const projectsSection = (
     <section>
@@ -138,6 +145,44 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </div>
           <ProjectPreview project={selectedProject} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
         </>
+      )}
+
+      {activeRole === "backend" && (
+        <div className="mt-8">
+          <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.postmortems}</h3>
+          <div className="flex flex-col gap-3">
+            {pagedPostmortems.map((postmortem) => (
+              <PostCard key={postmortem.slug} post={postmortem} basePath="/postmortems" />
+            ))}
+          </div>
+          {postmortemsPageCount > 1 && (
+            <div className="mt-4 flex items-center justify-center gap-4">
+              <button
+                onClick={() => setPostmortemsPage((p) => Math.max(0, p - 1))}
+                disabled={postmortemsPage === 0}
+                aria-label="Previous page"
+                className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600 tabular-nums">
+                {postmortemsPage + 1} / {postmortemsPageCount}
+              </span>
+              <button
+                onClick={() => setPostmortemsPage((p) => Math.min(postmortemsPageCount - 1, p + 1))}
+                disabled={postmortemsPage >= postmortemsPageCount - 1}
+                aria-label="Next page"
+                className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
       )}
 
       {activeRole === null && (
