@@ -42,8 +42,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [lang, setLang] = useState<Lang>("en");
   const [activeRole, setActiveRole] = useState<Role | "infra" | null>(null);
-  const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
   const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure">("projects");
+  const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
@@ -82,17 +82,27 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
       <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest text-zinc-500">
         {t.projects}
       </h2>
-      <div className="mb-4 grid gap-3 sm:grid-cols-2">
-        {sortedProjects.map((project) => (
-          <ProjectCard
-            key={project.slug}
-            project={project}
-            selected={project.slug === selectedProject.slug}
-            onSelect={() => setSelectedSlug(project.slug)}
-          />
-        ))}
-      </div>
-      <ProjectPreview project={selectedProject} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
+      {activeRole === "frontend" ? (
+        <div className="flex flex-col gap-6">
+          {sortedProjects.map((project) => (
+            <ProjectPreview key={project.slug} project={project} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className="mb-4 grid gap-3 sm:grid-cols-2">
+            {sortedProjects.map((project) => (
+              <ProjectCard
+                key={project.slug}
+                project={project}
+                selected={project.slug === selectedProject.slug}
+                onSelect={() => setSelectedSlug(project.slug)}
+              />
+            ))}
+          </div>
+          <ProjectPreview project={selectedProject} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
+        </>
+      )}
     </section>
   );
 

@@ -11,10 +11,37 @@ type Props = {
   sourceLabel: string;
 };
 
+const statusLabel = {
+  live: { label: "Live", className: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20" },
+  wip: { label: "WIP", className: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20" },
+  archived: { label: "Archived", className: "bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 border-zinc-500/20" },
+};
+
 export function ProjectPreview({ project, lang, liveLabel, sourceLabel }: Props) {
+  const status = statusLabel[project.status];
+
   return (
     <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-      <div className="flex flex-col gap-3 border-b border-zinc-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800">
+      <div className="px-4 pt-4">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <span className="text-lg font-semibold text-zinc-900 dark:text-white">{project.name}</span>
+          <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${status.className}`}>
+            {status.label}
+          </span>
+        </div>
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {project.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-md bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3 border-y border-zinc-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800">
         <div>
           <div className="flex items-center gap-1.5">
             <span className="flex gap-1">
