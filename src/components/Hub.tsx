@@ -41,7 +41,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [feedTab, setFeedTab] = useState<"postmortems" | "updates">("postmortems");
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [lang, setLang] = useState<Lang>("en");
-  const [activeRole, setActiveRole] = useState<Role | "infra" | null>(null);
+  const [activeRole, setActiveRole] = useState<Role | null>(null);
   const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure">("projects");
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
 
@@ -62,7 +62,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const t = strings[lang];
 
   const sortedProjects =
-    activeRole && activeRole !== "infra"
+    activeRole
       ? [...projects].sort((a, b) => {
           const scoreA = a.focus.indexOf(activeRole);
           const scoreB = b.focus.indexOf(activeRole);
@@ -229,7 +229,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               [null, t.roleFullStack],
               ["frontend", t.roleFrontend],
               ["backend", t.roleBackend],
-              ["infra", t.roleInfra],
             ] as const
           ).map(([value, label]) => (
             <button
@@ -275,11 +274,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             <AboutContent lang={lang} />
           ) : activeView === "infrastructure" ? (
             <InfrastructureContent lang={lang} />
-          ) : activeRole === "infra" ? (
-            <>
-              {infraSection}
-              {projectsSection}
-            </>
           ) : (
             <>
               {projectsSection}
