@@ -1,26 +1,23 @@
 const ENDPOINTS = [
-  "https://xapi.sacenpapier.org/api/health",
-  "https://poproomapi.sacenpapier.org/api/health",
-  "https://botwhyapi.sacenpapier.org/api/health",
-  "https://apercuapi.sacenpapier.org/api/health",
+  { name: "x", url: "https://xapi.sacenpapier.org/api/health" },
+  { name: "PopRoom", url: "https://poproomapi.sacenpapier.org/api/health" },
+  { name: "BotWhy", url: "https://botwhyapi.sacenpapier.org/api/health" },
+  { name: "Aperçu", url: "https://apercuapi.sacenpapier.org/api/health" },
 ];
 
 export async function GET() {
-  const timings = await Promise.all(
-    ENDPOINTS.map(async (url) => {
+  const apps = await Promise.all(
+    ENDPOINTS.map(async ({ name, url }) => {
       const start = performance.now();
       try {
         const res = await fetch(url, { cache: "no-store" });
-        const ms = performance.now() - start;
-        return res.ok ? ms : null;
+        const ms = Math.round(performance.now() - start);
+        return { name, ms, ok: res.ok };
       } catch {
-        return null;
+        return { name, ms: null, ok: false };
       }
     })
   );
 
-  const ok = timings.filter((t): t is number => t !== null);
-  const avgMs = ok.length > 0 ? Math.round(ok.reduce((a, b) => a + b, 0) / ok.length) : null;
-
-  return Response.json({ avgMs, sampled: ok.length, total: ENDPOINTS.length }, { headers: { "Cache-Control": "no-store" } });
+  return Response.json({ apps }, { headers: { "Cache-Control": "no-store" } });
 }

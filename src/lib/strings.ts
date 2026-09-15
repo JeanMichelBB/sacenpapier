@@ -17,10 +17,7 @@ export const strings = {
     roleFullStack: "Full-stack",
     roleFrontend: "Frontend",
     roleBackend: "Backend",
-    backendStatLatency: "avg API response time (live)",
-    backendStatEndpoints: "API endpoints",
-    backendStatLoc: "lines of backend code",
-    backendStatServices: "FastAPI services",
+    backendStatLatency: "Live API response time — refreshes every 10s",
     aboutNav: "About",
     aboutTitle: "About",
     aboutText: [
@@ -61,10 +58,7 @@ export const strings = {
     roleFullStack: "Full-stack",
     roleFrontend: "Frontend",
     roleBackend: "Backend",
-    backendStatLatency: "temps de réponse moyen (en direct)",
-    backendStatEndpoints: "points d'accès API",
-    backendStatLoc: "lignes de code backend",
-    backendStatServices: "services FastAPI",
+    backendStatLatency: "Temps de réponse en direct — actualisé toutes les 10s",
     aboutNav: "À propos",
     aboutTitle: "À propos",
     aboutText: [

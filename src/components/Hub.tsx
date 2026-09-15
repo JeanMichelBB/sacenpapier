@@ -44,7 +44,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [activeRole, setActiveRole] = useState<Role | null>(null);
   const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure">("projects");
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
-  const [backendLatency, setBackendLatency] = useState<number | null>(null);
+  const [backendPing, setBackendPing] = useState<{ name: string; ms: number | null; ok: boolean }[] | null>(null);
+  const [pingTick, setPingTick] = useState(0);
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
@@ -62,10 +63,23 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
 
   useEffect(() => {
     if (activeRole !== "backend") return;
-    fetch("/api/backend-latency")
-      .then((r) => r.json())
-      .then((d) => setBackendLatency(d.avgMs))
-      .catch(() => setBackendLatency(null));
+    let cancelled = false;
+    function poll() {
+      fetch("/api/backend-latency")
+        .then((r) => r.json())
+        .then((d) => {
+          if (cancelled) return;
+          setBackendPing(d.apps);
+          setPingTick((t) => t + 1);
+        })
+        .catch(() => {});
+    }
+    poll();
+    const interval = setInterval(poll, 10000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [activeRole]);
 
   const t = strings[lang];
@@ -80,13 +94,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
       : projects;
 
   const selectedProject = sortedProjects.find((p) => p.slug === selectedSlug) ?? sortedProjects[0];
-
-  const backendStats = [
-    { label: t.backendStatLatency, value: backendLatency === null ? "…" : `${backendLatency}ms` },
-    { label: t.backendStatEndpoints, value: 171 },
-    { label: t.backendStatLoc, value: "7.4k" },
-    { label: t.backendStatServices, value: projects.filter((p) => p.tags.includes("FastAPI")).length },
-  ];
 
   const UPDATES_PER_PAGE = 4;
   const updatesPageCount = Math.ceil(updates.length / UPDATES_PER_PAGE);
@@ -104,13 +111,30 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         {t.projects}
       </h2>
       {activeRole === "backend" && (
-        <div className="mb-6 grid grid-cols-2 gap-4 rounded-xl border border-zinc-200 bg-white p-5 sm:grid-cols-4 dark:border-zinc-800 dark:bg-zinc-900">
-          {backendStats.map((stat) => (
-            <div key={stat.label}>
-              <div className="text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{stat.value}</div>
-              <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{stat.label}</div>
-            </div>
-          ))}
+        <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
+            </span>
+            <span className="text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatLatency}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {(backendPing ?? [{ name: "x", ms: null, ok: true }, { name: "PopRoom", ms: null, ok: true }, { name: "BotWhy", ms: null, ok: true }, { name: "Aperçu", ms: null, ok: true }]).map((app) => (
+              <div key={app.name}>
+                <div key={`${app.name}-${pingTick}`} className="animate-fade-in text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">
+                  {app.ms === null ? (
+                    <span className="inline-block h-7 w-14 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+                  ) : app.ok ? (
+                    `${app.ms}ms`
+                  ) : (
+                    <span className="text-red-500 dark:text-red-400">—</span>
+                  )}
+                </div>
+                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{app.name}</div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
