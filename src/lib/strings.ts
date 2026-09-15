@@ -23,7 +23,7 @@ export const strings = {
     backendStatLive: "Live",
     backendStatEndpoints: "API endpoints",
     backendStatCommits: "commits",
-    backendStatDesc: "Response time and status are measured live, server-side, by pinging this app's own /api/health endpoint on every load — not a canned number. Endpoints and commits are counted directly from the app's real repository.",
+    backendStatDesc: "Live server-side ping — endpoints and commits pulled from the real repo.",
     aboutNav: "About",
     aboutTitle: "About",
     aboutText: [
@@ -70,7 +70,7 @@ export const strings = {
     backendStatLive: "En ligne",
     backendStatEndpoints: "points d'accès API",
     backendStatCommits: "commits",
-    backendStatDesc: "Le temps de réponse et le statut sont mesurés en direct, côté serveur, en interrogeant le point d'accès /api/health de cette application à chaque chargement — pas un chiffre figé. Les points d'accès et les commits sont comptés directement dans le vrai dépôt de l'application.",
+    backendStatDesc: "Sondé en direct côté serveur — points d'accès et commits tirés du vrai dépôt.",
     aboutNav: "À propos",
     aboutTitle: "À propos",
     aboutText: [
