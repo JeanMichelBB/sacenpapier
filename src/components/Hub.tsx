@@ -44,6 +44,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [activeRole, setActiveRole] = useState<Role | null>(null);
   const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure">("projects");
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
+  const [backendLatency, setBackendLatency] = useState<number | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
@@ -59,6 +60,14 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     setLang(next);
   }
 
+  useEffect(() => {
+    if (activeRole !== "backend") return;
+    fetch("/api/backend-latency")
+      .then((r) => r.json())
+      .then((d) => setBackendLatency(d.avgMs))
+      .catch(() => setBackendLatency(null));
+  }, [activeRole]);
+
   const t = strings[lang];
 
   const sortedProjects =
@@ -73,16 +82,10 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const selectedProject = sortedProjects.find((p) => p.slug === selectedSlug) ?? sortedProjects[0];
 
   const backendStats = [
+    { label: t.backendStatLatency, value: backendLatency === null ? "…" : `${backendLatency}ms` },
+    { label: t.backendStatEndpoints, value: 171 },
+    { label: t.backendStatLoc, value: "7.4k" },
     { label: t.backendStatServices, value: projects.filter((p) => p.tags.includes("FastAPI")).length },
-    { label: t.backendStatDb, value: projects.filter((p) => p.tags.includes("MySQL")).length },
-    {
-      label: t.backendStatAuth,
-      value: Array.from(new Set(projects.flatMap((p) => p.tags.filter((tag) => ["OAuth", "JWT"].includes(tag))))).length,
-    },
-    {
-      label: t.backendStatIntegrations,
-      value: Array.from(new Set(projects.flatMap((p) => p.tags.filter((tag) => ["Stripe", "OpenRouter"].includes(tag))))).length,
-    },
   ];
 
   const UPDATES_PER_PAGE = 4;
