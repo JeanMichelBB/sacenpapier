@@ -385,7 +385,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </div>
         )}
         {/* Header */}
-        <header className="mb-12 flex items-start justify-between gap-4">
+        <header className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="mb-2 flex items-center gap-3 text-3xl font-bold tracking-tight">
               sacenpapier.org
@@ -412,15 +412,15 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               </button>
             </p>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col items-start gap-2 sm:items-end">
+            <div className="flex flex-wrap items-center gap-2">
               <GithubLink />
               <LinkedinLink />
               <EmailLink />
               <LanguageToggle lang={lang} onChange={changeLang} />
               <ThemeToggle />
             </div>
-            <p className="max-w-[180px] text-right text-xs leading-snug text-zinc-500 dark:text-zinc-600 sm:max-w-[220px]">
+            <p className="max-w-[260px] text-left text-xs leading-snug text-zinc-500 dark:text-zinc-600 sm:max-w-[220px] sm:text-right">
               {t.status}
             </p>
           </div>
