@@ -72,6 +72,20 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
 
   const selectedProject = sortedProjects.find((p) => p.slug === selectedSlug) ?? sortedProjects[0];
 
+  const backendStats = [
+    { label: t.backendStatServices, value: projects.filter((p) => p.tags.includes("FastAPI")).length },
+    { label: t.backendStatDb, value: projects.filter((p) => p.tags.includes("MySQL")).length },
+    {
+      label: t.backendStatAuth,
+      value: Array.from(new Set(projects.flatMap((p) => p.tags.filter((tag) => ["OAuth", "JWT"].includes(tag))))).length,
+    },
+    {
+      label: t.backendStatIntegrations,
+      value: Array.from(new Set(projects.flatMap((p) => p.tags.filter((tag) => ["Stripe", "OpenRouter"].includes(tag))))).length,
+    },
+  ];
+  const backendIncident = postmortems.find((p) => p.slug.includes("argocd-rollout-shared-mysql"));
+
   const postmortemTags = Array.from(new Set(postmortems.flatMap((p) => p.tags))).sort();
   const visiblePostmortems = activeTag
     ? postmortems.filter((p) => p.tags.includes(activeTag))
@@ -82,6 +96,31 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
       <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest text-zinc-500">
         {t.projects}
       </h2>
+      {activeRole === "backend" && (
+        <div className="mb-6">
+          <div className="mb-3 grid grid-cols-2 gap-4 rounded-xl border border-zinc-200 bg-white p-5 sm:grid-cols-4 dark:border-zinc-800 dark:bg-zinc-900">
+            {backendStats.map((stat) => (
+              <div key={stat.label}>
+                <div className="text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{stat.value}</div>
+                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+          {backendIncident && (
+            <Link
+              href={`/postmortems/${backendIncident.slug}`}
+              className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
+            >
+              <div className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+                {t.backendIncidentLabel}
+              </div>
+              <div className="text-sm font-medium text-zinc-900 dark:text-white">{backendIncident.title}</div>
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{backendIncident.summary}</p>
+            </Link>
+          )}
+        </div>
+      )}
+
       {activeRole === "frontend" ? (
         <div className="flex flex-col gap-6">
           {sortedProjects.map((project) => (
@@ -187,10 +226,9 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         <div className="mb-8 flex flex-wrap items-center gap-2">
           {(
             [
-              [null, t.roleAll],
+              [null, t.roleFullStack],
               ["frontend", t.roleFrontend],
               ["backend", t.roleBackend],
-              ["full-stack", t.roleFullStack],
               ["infra", t.roleInfra],
             ] as const
           ).map(([value, label]) => (
