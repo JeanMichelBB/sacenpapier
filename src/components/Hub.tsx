@@ -38,8 +38,7 @@ function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
 export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updates: Update[] }) {
   const [crushed, setCrushed] = useState(false);
   const [notFound, setNotFound] = useState<string | null>(null);
-  const [feedTab, setFeedTab] = useState<"postmortems" | "updates">("postmortems");
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [updatesCount, setUpdatesCount] = useState(1);
   const [lang, setLang] = useState<Lang>("en");
   const [activeRole, setActiveRole] = useState<Role | null>(null);
   const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure">("projects");
@@ -86,10 +85,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   ];
   const backendIncident = postmortems.find((p) => p.slug.includes("argocd-rollout-shared-mysql"));
 
-  const postmortemTags = Array.from(new Set(postmortems.flatMap((p) => p.tags))).sort();
-  const visiblePostmortems = activeTag
-    ? postmortems.filter((p) => p.tags.includes(activeTag))
-    : postmortems;
+  const pagedUpdates = updates.slice(0, updatesCount);
+  const hasMoreUpdates = pagedUpdates.length < updates.length;
 
   const projectsSection = (
     <section>
@@ -142,27 +139,51 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           <ProjectPreview project={selectedProject} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
         </>
       )}
-    </section>
-  );
 
-  const infraSection = (
-    <section>
-      <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-500">
-        {t.infrastructure}
-      </h2>
-      <Link
-        href="/infrastructure"
-        className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
-      >
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
-        </span>
-        sacenpapier.org/infrastructure
-      </Link>
-      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-600">
-        {t.infrastructureDesc}
-      </p>
+      {activeRole === null && (
+        <div className="mt-8 flex flex-col gap-4">
+          {postmortems[0] && (
+            <div>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.postmortems}</h3>
+              <Link
+                href={`/postmortems/${postmortems[0].slug}`}
+                className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
+              >
+                <div className="text-sm font-medium text-zinc-900 dark:text-white">{postmortems[0].title}</div>
+                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{postmortems[0].summary}</p>
+              </Link>
+              <button
+                onClick={() => {
+                  setActiveRole("backend");
+                  setActiveView("projects");
+                }}
+                className="mt-2 w-full rounded-lg border border-zinc-200 py-2 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+              >
+                {t.nextPage}
+              </button>
+            </div>
+          )}
+
+          {updates[0] && (
+            <div>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.updates}</h3>
+              <div className="flex flex-col gap-3">
+                {pagedUpdates.map((update) => (
+                  <PostCard key={update.slug} post={update} basePath="/updates" />
+                ))}
+              </div>
+              {hasMoreUpdates && (
+                <button
+                  onClick={() => setUpdatesCount((c) => c + 4)}
+                  className="mt-2 w-full rounded-lg border border-zinc-200 py-2 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                >
+                  {t.nextPage}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 
@@ -275,78 +296,9 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           ) : activeView === "infrastructure" ? (
             <InfrastructureContent lang={lang} />
           ) : (
-            <>
-              {projectsSection}
-              {infraSection}
-            </>
+            projectsSection
           )}
         </div>
-
-        {/* Postmortems / Updates */}
-        <section className="mt-12">
-          <div className="mb-4 flex items-center border-b border-zinc-200 dark:border-zinc-800">
-            <button
-              onClick={() => setFeedTab("postmortems")}
-              className={`flex-1 border-b-2 pb-3 text-xs font-medium uppercase tracking-widest transition-colors ${
-                feedTab === "postmortems"
-                  ? "border-zinc-900 text-zinc-900 dark:border-zinc-200 dark:text-zinc-200"
-                  : "border-transparent text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
-              }`}
-            >
-              {t.postmortems}
-            </button>
-            <button
-              onClick={() => setFeedTab("updates")}
-              className={`flex-1 border-b-2 pb-3 text-xs font-medium uppercase tracking-widest transition-colors ${
-                feedTab === "updates"
-                  ? "border-zinc-900 text-zinc-900 dark:border-zinc-200 dark:text-zinc-200"
-                  : "border-transparent text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
-              }`}
-            >
-              {t.updates}
-            </button>
-          </div>
-          {feedTab === "postmortems" ? (
-            <div className="flex flex-col gap-3">
-              {postmortemTags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => setActiveTag(null)}
-                    className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                      activeTag === null
-                        ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
-                        : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-                    }`}
-                  >
-                    {t.all}
-                  </button>
-                  {postmortemTags.map((tag) => (
-                    <button
-                      key={tag}
-                      onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                      className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                        activeTag === tag
-                          ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
-                          : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-                      }`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {visiblePostmortems.map((postmortem) => (
-                <PostCard key={postmortem.slug} post={postmortem} basePath="/postmortems" />
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {updates.map((update) => (
-                <PostCard key={update.slug} post={update} basePath="/updates" />
-              ))}
-            </div>
-          )}
-        </section>
 
         {/* Footer */}
         <footer className="mt-16 flex flex-col items-center gap-3 text-xs text-zinc-500 dark:text-zinc-600">
