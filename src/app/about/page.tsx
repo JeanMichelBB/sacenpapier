@@ -7,6 +7,7 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { GithubLink } from "@/components/GithubLink";
 import { LinkedinLink } from "@/components/LinkedinLink";
 import { EmailLink } from "@/components/EmailLink";
+import { AboutContent } from "@/components/AboutContent";
 import { strings, type Lang } from "@/lib/strings";
 
 export default function AboutPage() {
@@ -50,13 +51,7 @@ export default function AboutPage() {
           </div>
         </header>
 
-        <div className="flex flex-col gap-4">
-          {t.aboutText.map((paragraph, i) => (
-            <p key={i} className="text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
-              {paragraph}
-            </p>
-          ))}
-        </div>
+        <AboutContent lang={lang} />
       </div>
     </div>
   );

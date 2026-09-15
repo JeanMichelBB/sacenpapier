@@ -9,6 +9,8 @@ import { Postmortem } from "@/lib/postmortems";
 import { Update } from "@/lib/updates";
 import { ProjectCard } from "@/components/ProjectCard";
 import { ProjectPreview } from "@/components/ProjectPreview";
+import { AboutContent } from "@/components/AboutContent";
+import { InfrastructureContent } from "@/components/InfrastructureContent";
 import { PostCard } from "@/components/PostCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -41,6 +43,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [lang, setLang] = useState<Lang>("en");
   const [activeRole, setActiveRole] = useState<Role | "infra" | null>(null);
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
+  const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure">("projects");
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
@@ -170,21 +173,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </div>
         </header>
 
-        {/* Page nav + role toggle */}
+        {/* Role toggle + page nav */}
         <div className="mb-8 flex flex-wrap items-center gap-2">
-          <Link
-            href="/about"
-            className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-          >
-            {t.aboutNav}
-          </Link>
-          <Link
-            href="/infrastructure"
-            className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-          >
-            {t.infrastructure}
-          </Link>
-          <span className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
           {(
             [
               [null, t.roleAll],
@@ -196,9 +186,12 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           ).map(([value, label]) => (
             <button
               key={label}
-              onClick={() => setActiveRole(activeRole === value ? null : value)}
+              onClick={() => {
+                setActiveRole(activeRole === value ? null : value);
+                setActiveView("projects");
+              }}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                activeRole === value
+                activeView === "projects" && activeRole === value
                   ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
                   : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
               }`}
@@ -206,10 +199,35 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               {label}
             </button>
           ))}
+          <span className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
+          <button
+            onClick={() => setActiveView(activeView === "about" ? "projects" : "about")}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+              activeView === "about"
+                ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            }`}
+          >
+            {t.aboutNav}
+          </button>
+          <button
+            onClick={() => setActiveView(activeView === "infrastructure" ? "projects" : "infrastructure")}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+              activeView === "infrastructure"
+                ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            }`}
+          >
+            {t.infrastructure}
+          </button>
         </div>
 
         <div className="flex flex-col gap-12">
-          {activeRole === "infra" ? (
+          {activeView === "about" ? (
+            <AboutContent lang={lang} />
+          ) : activeView === "infrastructure" ? (
+            <InfrastructureContent lang={lang} />
+          ) : activeRole === "infra" ? (
             <>
               {infraSection}
               {projectsSection}
