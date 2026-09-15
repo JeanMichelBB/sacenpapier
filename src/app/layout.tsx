@@ -14,9 +14,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const description = "A collection of personal projects — web apps, infra, and experiments.";
+
 export const metadata: Metadata = {
-  title: "sacenpapier.org",
-  description: "A collection of personal projects — web apps, infra, and experiments.",
+  metadataBase: new URL("https://sacenpapier.org"),
+  title: {
+    default: "sacenpapier.org",
+    template: "%s · sacenpapier.org",
+  },
+  description,
+  openGraph: {
+    title: "sacenpapier.org",
+    description,
+    url: "https://sacenpapier.org",
+    siteName: "sacenpapier.org",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "sacenpapier.org",
+    description,
+  },
 };
 
 export default function RootLayout({

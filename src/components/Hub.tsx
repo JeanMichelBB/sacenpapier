@@ -3,16 +3,19 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { projects } from "@/data/projects";
+import Link from "next/link";
+import { projects, type Role } from "@/data/projects";
 import { Postmortem } from "@/lib/postmortems";
 import { Update } from "@/lib/updates";
 import { ProjectCard } from "@/components/ProjectCard";
 import { PostCard } from "@/components/PostCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { GithubLink } from "@/components/GithubLink";
 import { LinkedinLink } from "@/components/LinkedinLink";
 import { EmailLink } from "@/components/EmailLink";
 import { PodBadge } from "@/components/PodBadge";
+import { strings, type Lang } from "@/lib/strings";
 
 function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
   const searchParams = useSearchParams();
@@ -33,6 +36,75 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [crushed, setCrushed] = useState(false);
   const [notFound, setNotFound] = useState<string | null>(null);
   const [feedTab, setFeedTab] = useState<"postmortems" | "updates">("postmortems");
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [lang, setLang] = useState<Lang>("en");
+  const [activeRole, setActiveRole] = useState<Role | "infra" | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("lang");
+    if (saved === "en" || saved === "fr") {
+      setLang(saved);
+      document.documentElement.lang = saved;
+    }
+  }, []);
+
+  function changeLang(next: Lang) {
+    localStorage.setItem("lang", next);
+    document.documentElement.lang = next;
+    setLang(next);
+  }
+
+  const t = strings[lang];
+
+  const sortedProjects =
+    activeRole && activeRole !== "infra"
+      ? [...projects].sort((a, b) => {
+          const scoreA = a.focus.indexOf(activeRole);
+          const scoreB = b.focus.indexOf(activeRole);
+          return (scoreA === -1 ? 99 : scoreA) - (scoreB === -1 ? 99 : scoreB);
+        })
+      : projects;
+
+  const postmortemTags = Array.from(new Set(postmortems.flatMap((p) => p.tags))).sort();
+  const visiblePostmortems = activeTag
+    ? postmortems.filter((p) => p.tags.includes(activeTag))
+    : postmortems;
+
+  const projectsSection = (
+    <section>
+      <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+        {t.projects}
+      </h2>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {sortedProjects.map((project) => (
+          <ProjectCard key={project.slug} project={project} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
+        ))}
+      </div>
+    </section>
+  );
+
+  const infraSection = (
+    <section>
+      <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+        {t.infrastructure}
+      </h2>
+      <a
+        href="https://homelab.sacenpapier.org"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+      >
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
+        </span>
+        homelab.sacenpapier.org
+      </a>
+      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-600">
+        {t.infrastructureDesc}
+      </p>
+    </section>
+  );
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-white">
@@ -44,7 +116,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           <div className="mb-6 flex justify-center animate-fade-in">
             <div className="inline-flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 dark:border-red-700 dark:bg-red-950 dark:text-red-300">
               <span>✕</span>
-              <span><span className="text-red-500 dark:text-red-400">{notFound}.sacenpapier.org</span> does not exist.</span>
+              <span><span className="text-red-500 dark:text-red-400">{notFound}.sacenpapier.org</span> {t.notFoundSuffix}</span>
             </div>
           </div>
         )}
@@ -64,7 +136,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               </button>
             </h1>
             <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
-              A collection of personal projects — web apps, infra, and experiments.
+              {t.tagline}
               <button onClick={() => setCrushed(true)} className="sm:hidden shrink-0 transition-transform duration-150 hover:scale-110 active:scale-95">
                 <Image
                   src={crushed ? "/img/Paper Bag Crush.png" : "/img/shopping-bag.png"}
@@ -76,47 +148,64 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               </button>
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <GithubLink />
-            <LinkedinLink />
-            <EmailLink />
-            <ThemeToggle />
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-2">
+              <Link
+                href="/about"
+                className="flex h-8 items-center rounded-lg border border-zinc-200 px-3 text-xs font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
+              >
+                {t.aboutNav}
+              </Link>
+              <GithubLink />
+              <LinkedinLink />
+              <EmailLink />
+              <LanguageToggle lang={lang} onChange={changeLang} />
+              <ThemeToggle />
+            </div>
+            <p className="max-w-[180px] text-right text-xs leading-snug text-zinc-500 dark:text-zinc-600 sm:max-w-[220px]">
+              {t.status}
+            </p>
           </div>
         </header>
 
-        {/* Projects */}
-        <section>
-          <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest text-zinc-500">
-            Projects
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {projects.map((project) => (
-              <ProjectCard key={project.slug} project={project} />
-            ))}
-          </div>
-        </section>
+        {/* Role toggle */}
+        <div className="mb-8 flex flex-wrap gap-2">
+          {(
+            [
+              [null, t.roleAll],
+              ["frontend", t.roleFrontend],
+              ["backend", t.roleBackend],
+              ["full-stack", t.roleFullStack],
+              ["infra", t.roleInfra],
+            ] as const
+          ).map(([value, label]) => (
+            <button
+              key={label}
+              onClick={() => setActiveRole(activeRole === value ? null : value)}
+              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                activeRole === value
+                  ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
+                  : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
 
-        {/* Infrastructure */}
-        <section className="mt-12">
-          <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-500">
-            Infrastructure
-          </h2>
-          <a
-            href="https://homelab.sacenpapier.org"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
-          >
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
-            </span>
-            homelab.sacenpapier.org
-          </a>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-600">
-            Live infrastructure overview — k3s cluster, nodes, and pod routing.
-          </p>
-        </section>
+        <div className="flex flex-col gap-12">
+          {activeRole === "infra" ? (
+            <>
+              {infraSection}
+              {projectsSection}
+            </>
+          ) : (
+            <>
+              {projectsSection}
+              {infraSection}
+            </>
+          )}
+        </div>
 
         {/* Postmortems / Updates */}
         <section className="mt-12">
@@ -129,7 +218,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                   : "border-transparent text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
               }`}
             >
-              Postmortems
+              {t.postmortems}
             </button>
             <button
               onClick={() => setFeedTab("updates")}
@@ -139,12 +228,39 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                   : "border-transparent text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
               }`}
             >
-              Updates
+              {t.updates}
             </button>
           </div>
           {feedTab === "postmortems" ? (
             <div className="flex flex-col gap-3">
-              {postmortems.map((postmortem) => (
+              {postmortemTags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setActiveTag(null)}
+                    className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                      activeTag === null
+                        ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
+                        : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                    }`}
+                  >
+                    {t.all}
+                  </button>
+                  {postmortemTags.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                      className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                        activeTag === tag
+                          ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
+                          : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {visiblePostmortems.map((postmortem) => (
                 <PostCard key={postmortem.slug} post={postmortem} basePath="/postmortems" />
               ))}
             </div>
@@ -174,7 +290,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               LinkedIn
             </a>
           </div>
-          Built with Next.js · Deployed on k3s
+          {t.footer}
         </footer>
       </div>
     </div>

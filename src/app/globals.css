@@ -33,3 +33,10 @@ body {
 .animate-fade-in {
   animation: fade-in 0.2s ease-out;
 }
+
+@media (max-width: 640px) {
+  body.has-cookie-banner {
+    padding-bottom: 96px;
+    transition: padding-bottom 0.2s ease-out;
+  }
+}

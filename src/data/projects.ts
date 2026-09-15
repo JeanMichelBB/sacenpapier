@@ -1,10 +1,15 @@
+export type Role = "frontend" | "backend" | "full-stack";
+
 export type Project = {
   name: string;
   slug: string;
   description: { en: string; fr: string };
   url: string;
+  repoUrl: string;
   tags: string[];
   status: "live" | "wip" | "archived";
+  /** Roles this project best demonstrates, most relevant first. Drives the homepage role toggle's sort order. */
+  focus: Role[];
 };
 
 export const projects: Project[] = [
@@ -16,8 +21,10 @@ export const projects: Project[] = [
       fr: "Une plateforme sociale inspirée de Twitter — tweets, retweets, mentions J'aime, abonnements, messages directs et notifications.",
     },
     url: "https://x.sacenpapier.org",
+    repoUrl: "https://github.com/jeanmichelbb/x",
     tags: ["React", "TypeScript", "FastAPI", "MySQL", "Docker"],
     status: "live",
+    focus: ["full-stack", "backend"],
   },
   {
     name: "PopRoom",
@@ -27,8 +34,10 @@ export const projects: Project[] = [
       fr: "Canevas multijoueur en temps réel où les utilisateurs contrôlent des bonhommes allumettes et éclatent des ballons.",
     },
     url: "https://poproom.sacenpapier.org",
+    repoUrl: "https://github.com/JeanMichelBB/PopRoom",
     tags: ["React", "FastAPI", "WebSockets", "Canvas"],
     status: "live",
+    focus: ["frontend", "full-stack"],
   },
   {
     name: "BotWhy",
@@ -38,8 +47,10 @@ export const projects: Project[] = [
       fr: "Un chatbot IA sarcastique et volontairement peu serviable — 8 modèles au choix via OpenRouter, crédits payants via Stripe, connexion Google OAuth.",
     },
     url: "https://botwhy.sacenpapier.org",
+    repoUrl: "https://github.com/JeanMichelBB/BotWhy",
     tags: ["React", "FastAPI", "OpenRouter", "Stripe", "OAuth"],
     status: "live",
+    focus: ["backend", "full-stack"],
   },
   {
     name: "Aperçu",
@@ -49,7 +60,9 @@ export const projects: Project[] = [
       fr: "Plateforme full-stack de gestion d'événements. Les organisateurs publient événements, conférenciers et articles sous approbation admin, avec support EN/FR.",
     },
     url: "https://apercu.sacenpapier.org",
+    repoUrl: "https://github.com/JeanMichelBB/Apercu",
     tags: ["React", "FastAPI", "MySQL", "JWT", "Docker", "CI/CD"],
     status: "live",
+    focus: ["backend", "full-stack"],
   },
 ];
