@@ -129,7 +129,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         );
         return (
           <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-            <div className="mb-4 flex items-center gap-2">
+            <div className="mb-1 flex items-center gap-2">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
@@ -138,6 +138,9 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                 {selectedProject.name} — {t.backendStatLatency}
               </span>
             </div>
+            <p className="mb-4 text-xs leading-relaxed text-zinc-400 dark:text-zinc-600">
+              {t.backendStatDesc}
+            </p>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <div>
                 <div className="flex h-8 items-center">
