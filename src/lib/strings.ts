@@ -21,7 +21,6 @@ export const strings = {
     backendStatDb: "MySQL databases",
     backendStatAuth: "auth methods",
     backendStatIntegrations: "3rd-party integrations",
-    backendIncidentLabel: "Recent backend incident",
     aboutNav: "About",
     aboutTitle: "About",
     aboutText: [
@@ -66,7 +65,6 @@ export const strings = {
     backendStatDb: "bases de données MySQL",
     backendStatAuth: "méthodes d'authentification",
     backendStatIntegrations: "intégrations tierces",
-    backendIncidentLabel: "Incident backend récent",
     aboutNav: "À propos",
     aboutTitle: "À propos",
     aboutText: [
