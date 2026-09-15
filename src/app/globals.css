@@ -34,6 +34,15 @@ body {
   animation: fade-in 0.2s ease-out;
 }
 
+@keyframes value-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-value-in {
+  animation: value-in 0.2s ease-out;
+}
+
 @media (max-width: 640px) {
   body.has-cookie-banner {
     padding-bottom: 96px;

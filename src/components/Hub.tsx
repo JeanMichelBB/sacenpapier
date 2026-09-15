@@ -144,7 +144,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                   {pinging ? (
                     spinner
                   ) : (
-                    <span key={`ms-${pingTick}`} className="animate-fade-in text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">
+                    <span key={`ms-${pingTick}`} className="animate-value-in text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">
                       {ping?.ok ? `${ping.ms}ms` : <span className="text-red-500 dark:text-red-400">—</span>}
                     </span>
                   )}
@@ -158,7 +158,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                   ) : (
                     <span
                       key={`status-${pingTick}`}
-                      className={`animate-fade-in text-2xl font-bold font-mono tabular-nums ${ping?.ok ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}
+                      className={`animate-value-in text-2xl font-bold font-mono tabular-nums ${ping?.ok ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}
                     >
                       {ping?.ok ? t.backendStatLive : "—"}
                     </span>
