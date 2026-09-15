@@ -1,8 +1,8 @@
 import os from "os";
 
-export async function GET() {
+export function GET() {
   return Response.json(
-    { hostname: os.hostname(), node: process.env.NODE_NAME ?? null },
-    { headers: { "Cache-Control": "no-store" } }
+    { pod: os.hostname(), node: process.env.NODE_NAME ?? null },
+    { headers: { "Cache-Control": "no-store", "Connection": "close" } }
   );
 }

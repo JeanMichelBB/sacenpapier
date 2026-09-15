@@ -20,8 +20,8 @@ export type K3sData = {
 };
 
 export type PodInfo = {
-  hostname: string;
-  node: string;
+  pod: string;
+  node: string | null;
 };
 
 async function get<T>(path: string): Promise<T> {
