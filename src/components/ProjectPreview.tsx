@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Project } from "@/data/projects";
 import { Lang } from "@/lib/strings";
 
@@ -88,9 +88,15 @@ function ScaledFrame({ src, title }: { src: string; title: string }) {
   const [scale, setScale] = useState(1);
   const [ref, setRef] = useState(DESKTOP_REF);
   // Cache-bust so visitors always see the currently-deployed app instead of a
-  // browser-cached snapshot from a previous visit — memoized per src so it
-  // doesn't force a reload on every re-render (dark mode, lang toggle, etc).
-  const bustedSrc = useMemo(() => `${src}${src.includes("?") ? "&" : "?"}_t=${Date.now()}`, [src]);
+  // browser-cached snapshot from a previous visit. Starts equal to src (so SSR
+  // and the client's first render match) and is only set client-side, after
+  // hydration — computing it during render would use Date.now() at two
+  // different instants on the server and the client, causing a hydration
+  // mismatch on the iframe's src.
+  const [bustedSrc, setBustedSrc] = useState(src);
+  useEffect(() => {
+    setBustedSrc(`${src}${src.includes("?") ? "&" : "?"}_t=${Date.now()}`);
+  }, [src]);
 
   useEffect(() => {
     function update() {
