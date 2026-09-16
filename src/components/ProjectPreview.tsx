@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Project } from "@/data/projects";
 import { Lang } from "@/lib/strings";
 
@@ -87,6 +87,10 @@ function ScaledFrame({ src, title }: { src: string; title: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [ref, setRef] = useState(DESKTOP_REF);
+  // Cache-bust so visitors always see the currently-deployed app instead of a
+  // browser-cached snapshot from a previous visit — memoized per src so it
+  // doesn't force a reload on every re-render (dark mode, lang toggle, etc).
+  const bustedSrc = useMemo(() => `${src}${src.includes("?") ? "&" : "?"}_t=${Date.now()}`, [src]);
 
   useEffect(() => {
     function update() {
@@ -109,7 +113,7 @@ function ScaledFrame({ src, title }: { src: string; title: string }) {
     >
       <iframe
         key={src}
-        src={src}
+        src={bustedSrc}
         title={title}
         style={{
           width: ref.w,
