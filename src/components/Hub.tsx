@@ -76,11 +76,28 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     const savedScroll = sessionStorage.getItem("hub-scroll");
     if (savedScroll) {
       const y = parseInt(savedScroll, 10);
-      // Retried over a short window: Next.js's own navigation can reset scroll
-      // to top slightly after our effects run, so a single attempt isn't reliable.
-      const delays = [0, 50, 150, 300];
-      const timers = delays.map((ms) => setTimeout(() => window.scrollTo(0, y), ms));
-      return () => timers.forEach(clearTimeout);
+      // Retried over a longer window on top of the initial fast attempts: on
+      // mobile, slower hydration and the live project-preview iframes loading
+      // over the network keep changing the page's height well past 300ms, so
+      // a short window restores to a y that the page hasn't grown into yet.
+      // Bails out if the visitor starts scrolling themselves.
+      let cancelled = false;
+      const stop = () => {
+        cancelled = true;
+      };
+      window.addEventListener("wheel", stop, { once: true, passive: true });
+      window.addEventListener("touchmove", stop, { once: true, passive: true });
+      const delays = [0, 50, 150, 300, 600, 1000, 1600, 2400];
+      const timers = delays.map((ms) =>
+        setTimeout(() => {
+          if (!cancelled) window.scrollTo(0, y);
+        }, ms)
+      );
+      return () => {
+        timers.forEach(clearTimeout);
+        window.removeEventListener("wheel", stop);
+        window.removeEventListener("touchmove", stop);
+      };
     }
   }, []);
 
