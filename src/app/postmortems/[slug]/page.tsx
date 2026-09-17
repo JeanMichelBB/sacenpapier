@@ -1,10 +1,29 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getAllPostmortems, getPostmortem } from "@/lib/postmortems";
 import { BackLink } from "@/components/BackLink";
 
 export function generateStaticParams() {
   return getAllPostmortems().map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const postmortem = getPostmortem(slug);
+  if (!postmortem) return {};
+
+  const description = postmortem.summary.slice(0, 160);
+  return {
+    title: postmortem.title,
+    description,
+    openGraph: { title: postmortem.title, description, type: "article" },
+    twitter: { title: postmortem.title, description },
+  };
 }
 
 export default async function PostmortemPage({

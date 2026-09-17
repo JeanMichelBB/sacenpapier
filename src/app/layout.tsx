@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     template: "%s · sacenpapier.org",
   },
   description,
+  alternates: {
+    types: { "application/rss+xml": "/updates/rss.xml" },
+  },
   openGraph: {
     title: "sacenpapier.org",
     description,

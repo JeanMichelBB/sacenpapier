@@ -1,10 +1,29 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getAllUpdates, getUpdate } from "@/lib/updates";
 import { BackLink } from "@/components/BackLink";
 
 export function generateStaticParams() {
   return getAllUpdates().map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const update = getUpdate(slug);
+  if (!update) return {};
+
+  const description = update.summary.slice(0, 160);
+  return {
+    title: update.title,
+    description,
+    openGraph: { title: update.title, description, type: "article" },
+    twitter: { title: update.title, description },
+  };
 }
 
 export default async function UpdatePage({
