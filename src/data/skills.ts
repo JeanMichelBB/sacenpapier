@@ -24,6 +24,7 @@ export const skills: Skill[] = [
   { label: "Auth", match: ["Auth"] },
   { label: "MySQL", match: ["MySQL", "shared-mysql"] },
   { label: "Secrets Management", match: ["Doppler", "Secrets"] },
+  { label: "Observability", match: ["Observability", "Prometheus", "OpenTelemetry", "Tracing"] },
   { label: "Canvas / Real-time", match: ["Canvas", "WebSockets", "Procedural"] },
   { label: "Payments", match: ["Stripe", "Payments"] },
   { label: "Local LLM", match: ["Local LLM", "Ollama", "Hermes Agent"] },
