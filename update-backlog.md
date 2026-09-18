@@ -56,13 +56,13 @@ tspi (k3s-external monitoring stack), tstruenas (storage), tsopnsense (firewall/
 tsoci-node-1/2 (pure k3s workers, nothing extra running). Cross-checked each finding against both
 Updates and Postmortems before adding here, to avoid re-documenting something already written up.
 
-- [ ] Nightly config backup: elitedesk + tspi each cron a script that pulls live config (docker-compose,
+- [x] Nightly config backup: elitedesk + tspi each cron a script that pulls live config (docker-compose,
   Prometheus/Alertmanager configs, Grafana dashboards via API export, crontab) back into the
   `homelab` git repo, secrets redacted, and commits+pushes automatically — 2026-09-18 (live-infra find)
-- [ ] Two-tier Watchtower auto-updates: stateful/user-data containers (Sonarr, Radarr, Jellyfin, qBittorrent,
+- [x] Two-tier Watchtower auto-updates: stateful/user-data containers (Sonarr, Radarr, Jellyfin, qBittorrent,
   etc.) kept on monitor-only, with a custom script that parses Watchtower's logs and fires a real
   Alertmanager alert for pending manual-review updates — 2026-09-18 (live-infra find)
-- [ ] `longhorn-webhook-watchdog.sh`: detects Longhorn's `webhook ... context deadline exceeded` failure
+- [x] `longhorn-webhook-watchdog.sh`: detects Longhorn's `webhook ... context deadline exceeded` failure
   signature in the manager logs and auto-deletes the stale validating/mutating webhook configs so
   Longhorn re-registers itself — 2026-09-18 (live-infra find)
 - [x] ~~UPS/NUT power monitoring~~ — **not shipped yet**: `os-nut` plugin installed on OPNsense and
