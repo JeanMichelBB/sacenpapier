@@ -14,7 +14,11 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 - [x] Shared observability pattern: `/metrics` + per-app business gauges — backlog item #3, 2026-09-13
 - [x] Blackbox Exporter for all 6 public URLs — backlog item #4, 2026-09-13
 - [ ] ArgoCD Image Updater — closing the CI/GitOps loop (git-sha tags, drop SSH deploy) — backlog item #5, 2026-09-13
-- [ ] Distributed tracing with OpenTelemetry, exported to Tempo — backlog item #14, 2026-09-13
+  **On hold**: draft written but not shipped — the accurate write-up reveals that the CI secrets in
+  all 6 repos turned out to be the personal MacBook's own SSH key, still valid/in daily use and not
+  yet rotated (see backlog item #21). Publish only after that key is rotated. Draft sits untracked
+  at `content/updates/2026-09-13-closing-the-ci-to-gitops-loop-with-argocd-image-updater.md`.
+- [x] Distributed tracing with OpenTelemetry, exported to Tempo — backlog item #14, 2026-09-13
 - [ ] Container image vulnerability scanning with Trivy in CI — backlog item #10, 2026-09-14
 - [ ] Kubernetes resource requests/limits audit across every Deployment — backlog item #11, 2026-09-14
 - [ ] Privilege scoping: homelab-dashboard + kube-system/prometheus ServiceAccounts off `cluster-admin` — backlog items #18 + #19, 2026-09-13
