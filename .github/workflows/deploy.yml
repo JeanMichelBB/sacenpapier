@@ -10,6 +10,9 @@ on:
       - "public/**"
       - "package.json"
       - "package-lock.json"
+      - "next.config.ts"
+      - "tsconfig.json"
+      - "postcss.config.mjs"
       - "Dockerfile"
       - ".github/workflows/deploy.yml"
 
