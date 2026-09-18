@@ -10,7 +10,7 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 ## Fleet-wide infra (all/most of the 6 apps + shared-mysql, from homelab-platform-todo.md)
 
-- [ ] Doppler secrets management rollout across the fleet — backlog item #1, 2026-09-13
+- [x] Doppler secrets management rollout across the fleet — backlog item #1, 2026-09-13
 - [ ] Shared observability pattern: `/metrics` + per-app business gauges — backlog item #3, 2026-09-13
 - [ ] Blackbox Exporter for all 6 public URLs — backlog item #4, 2026-09-13
 - [ ] ArgoCD Image Updater — closing the CI/GitOps loop (git-sha tags, drop SSH deploy) — backlog item #5, 2026-09-13
