@@ -32,8 +32,8 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 ## x
 
 - [x] Direct messages: search + send, styled — 2024-05-14 to 2024-05-19
-- [ ] Building the core app: layout, tweets, follow/following, likes, suggestions, profile — 2024-05-12 to 2024-05-28 (deeper-pass find, 2026-09-18)
-- [ ] Retweets + comment overlay, Status/Coming-Soon pages, profile background picture — 2026-03-21 (deeper-pass find, 2026-09-18)
+- [x] Building the core app: layout, tweets, follow/following, likes, suggestions, profile — 2024-05-12 to 2024-05-28 (deeper-pass find, 2026-09-18)
+- [x] Retweets + comment overlay, Status/Coming-Soon pages, profile background picture — 2026-03-21 (deeper-pass find, 2026-09-18)
 
 ## BotWhy
 
