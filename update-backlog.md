@@ -49,6 +49,34 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
   `refresh_seeded_dates` were never actually added to `fastapi-backend/models.py`/`seed.py`. Not an
   Update candidate. Checked off as resolved (investigated, correctly not written up), not shipped.
 
+## Live infra (found by SSHing into each host, not in any git repo)
+
+Survey done 2026-09-18 per `~/.ssh/config`: tselitedesk (k3s master + media/tools docker host),
+tspi (k3s-external monitoring stack), tstruenas (storage), tsopnsense (firewall/networking),
+tsoci-node-1/2 (pure k3s workers, nothing extra running). Cross-checked each finding against both
+Updates and Postmortems before adding here, to avoid re-documenting something already written up.
+
+- [ ] Nightly config backup: elitedesk + tspi each cron a script that pulls live config (docker-compose,
+  Prometheus/Alertmanager configs, Grafana dashboards via API export, crontab) back into the
+  `homelab` git repo, secrets redacted, and commits+pushes automatically — 2026-09-18 (live-infra find)
+- [ ] Two-tier Watchtower auto-updates: stateful/user-data containers (Sonarr, Radarr, Jellyfin, qBittorrent,
+  etc.) kept on monitor-only, with a custom script that parses Watchtower's logs and fires a real
+  Alertmanager alert for pending manual-review updates — 2026-09-18 (live-infra find)
+- [ ] `longhorn-webhook-watchdog.sh`: detects Longhorn's `webhook ... context deadline exceeded` failure
+  signature in the manager logs and auto-deletes the stale validating/mutating webhook configs so
+  Longhorn re-registers itself — 2026-09-18 (live-infra find)
+- [x] ~~UPS/NUT power monitoring~~ — **not shipped yet**: `os-nut` plugin installed on OPNsense and
+  nut-exporter/nut-client containers running on elitedesk, but `upsc` returns "Connection refused"
+  and OPNsense's `ups` service isn't running — genuinely in progress, not functional. Not an Update
+  candidate until it actually reports real UPS data.
+- [x] ~~docker-watchdog.sh~~ — **already documented**, as the Prevention section of
+  [prometheus-alertmanager-silently-stopped-restarting](../content/postmortems/2026-06-27-prometheus-alertmanager-silently-stopped-restarting.md)
+  (a Postmortem, not an Update). Not re-documented here.
+- Skipped as not recruiter-relevant / not real engineering to write up: the Jellyfin/Sonarr/Radarr/
+  Prowlarr/qBittorrent/Gluetun/Seerr/byparr media stack (off-the-shelf hobbyist setup), Portainer
+  (installed, not built), graphite_exporter/cadvisor (feed a personal Minecraft/container-metrics
+  dashboard, not distinctive), Uptime Kuma (redundant with the already-documented Blackbox Exporter).
+
 ## Legacy / origin infra
 
 - [x] Early production infra: Terraform (OCI network + cluster) + Ansible deploy for BotWhy on Oracle Cloud, before the migration to the k3s homelab — 2025-03-05 through 2026-03-05 (`infra/OCI/oci-terraform-network`, `oci-terraform-cluster`, `oci-product-service`)
