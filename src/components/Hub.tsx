@@ -465,7 +465,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               }}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                 activeView === "projects" && activeRole === value
-                  ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
+                  ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
                   : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
               }`}
             >
@@ -481,7 +481,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             }}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
               activeView === "infrastructure"
-                ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
+                ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             }`}
           >
@@ -495,7 +495,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             }}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
               activeView === "about"
-                ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
+                ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             }`}
           >

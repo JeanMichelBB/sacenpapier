@@ -22,7 +22,7 @@ export function ProjectCard({ project, selected, onSelect, hideStatus, liveLabel
     <div
       className={`w-full rounded-xl border transition-colors ${
         selected
-          ? "border-zinc-900 bg-zinc-50 dark:border-zinc-200 dark:bg-zinc-800/60"
+          ? "border-[#FF8225] bg-[#FF8225]/[0.08] dark:bg-[#FF8225]/10"
           : "border-zinc-200 bg-white hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
       }`}
     >
