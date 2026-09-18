@@ -27,7 +27,7 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 - [x] TrueNAS integration migrated from REST to JSON-RPC 2.0/WebSocket (cert fix, API key churn) — backlog item #8, 2026-09-12
 - [x] OPNsense firewall-level monitoring + TrueNAS ZFS pool health check added to the Pi's monitoring stack — backlog items #6 + #7, ~2026-09-11
-- [ ] OpnSense page + Glances-based Windows node monitoring added to the dashboard UI — 2026-04-20 to 2026-05-02
+- [x] OpnSense page + Glances-based Windows node monitoring added to the dashboard UI — 2026-04-20 to 2026-05-02
 
 ## x
 
