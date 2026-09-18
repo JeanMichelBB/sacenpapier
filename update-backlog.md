@@ -12,7 +12,7 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 - [x] Doppler secrets management rollout across the fleet — backlog item #1, 2026-09-13
 - [x] Shared observability pattern: `/metrics` + per-app business gauges — backlog item #3, 2026-09-13
-- [ ] Blackbox Exporter for all 6 public URLs — backlog item #4, 2026-09-13
+- [x] Blackbox Exporter for all 6 public URLs — backlog item #4, 2026-09-13
 - [ ] ArgoCD Image Updater — closing the CI/GitOps loop (git-sha tags, drop SSH deploy) — backlog item #5, 2026-09-13
 - [ ] Distributed tracing with OpenTelemetry, exported to Tempo — backlog item #14, 2026-09-13
 - [ ] Container image vulnerability scanning with Trivy in CI — backlog item #10, 2026-09-14
