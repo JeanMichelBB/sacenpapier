@@ -32,6 +32,13 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 ## x
 
 - [x] Direct messages: search + send, styled — 2024-05-14 to 2024-05-19
+- [ ] Building the core app: layout, tweets, follow/following, likes, suggestions, profile — 2024-05-12 to 2024-05-28 (deeper-pass find, 2026-09-18)
+- [ ] Retweets + comment overlay, Status/Coming-Soon pages, profile background picture — 2026-03-21 (deeper-pass find, 2026-09-18)
+
+## BotWhy
+
+- [ ] Building the core chat app: conversation API, first chatbox pages, validation, mobile, docker — 2024-08-11 to 2024-08-16 (deeper-pass find, 2026-09-18)
+- [ ] Cookie consent + comments/likes on trending conversations — 2026-03-24 (deeper-pass find, 2026-09-18)
 
 ## Apercu
 
@@ -49,8 +56,10 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 - `infra/homelab` has no commit history (working tree is fully uncommitted/staged) — can't mine
   it via git log. Its `docs/*.md` incident writeups look like they already fed the Postmortems
   section, not Updates. Revisit only if the user wants something specific documented from it.
-- BotWhy, PopRoom, and the rest of Apercu/x feature history is already well covered by existing
-  Update posts — no further gaps found there.
+- PopRoom and the rest of Apercu's feature history is already well covered by existing Update
+  posts — no further gaps found there. A deeper full-history pass on BotWhy and x (2026-09-18)
+  found 4 more gaps, added above; both repos' remaining commits (credit system, admin UI, voice
+  mode, trending moderation, notifications/lists/explore/bookmarks) are already covered.
 - `sacenpapier` (the hub itself) and `shared-mysql`'s own repo history are mostly meta/plumbing
   already reflected in other Updates (GitOps rollout, per-app MySQL users) — no standalone
   candidate worth adding.
