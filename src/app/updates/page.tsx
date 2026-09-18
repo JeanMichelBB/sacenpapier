@@ -10,11 +10,13 @@ export const metadata: Metadata = {
 export default async function UpdatesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; skill?: string }>;
 }) {
-  const { page } = await searchParams;
+  const { page, skill } = await searchParams;
   const updates = getAllUpdates();
   const currentPage = parseInt(page ?? "1", 10) || 1;
 
-  return <PostListPage titleKey="updates" basePath="/updates" posts={updates} currentPage={currentPage} />;
+  return (
+    <PostListPage titleKey="updates" basePath="/updates" posts={updates} currentPage={currentPage} currentSkill={skill} />
+  );
 }
