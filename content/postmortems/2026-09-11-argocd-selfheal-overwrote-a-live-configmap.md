@@ -15,7 +15,7 @@ The `k3s/` directory in the repo had no `kustomization.yaml` explicitly listing 
 
 ## Fix
 
-Removed the naming collision and started the broader migration to an explicit `kustomization.yaml` per repo (see the Kustomize-migration update) so ArgoCD only ever applies a named allowlist of manifests instead of blind-globbing a directory.
+Removed the naming collision and started the broader migration to an explicit `kustomization.yaml` per repo (see [the Kustomize-migration update](/updates/2026-09-13-kustomize-migration-for-k3s-and-argocd)) so ArgoCD only ever applies a named allowlist of manifests instead of blind-globbing a directory.
 
 ## Prevention
 

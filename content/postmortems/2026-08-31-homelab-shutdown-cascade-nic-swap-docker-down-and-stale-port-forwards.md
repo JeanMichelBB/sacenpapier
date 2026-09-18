@@ -2,7 +2,7 @@
 title: Homelab Shutdown Cascade — NIC Swap, Docker Down, and Stale Port Forwards
 date: 2026-08-31
 duration: ~4h intermittent
-tags: [homelab, docker, networking, DNS, DHCP, OPNsense, TrueNAS, elitedesk]
+tags: [Homelab, Docker, Networking, DNS, DHCP, OPNsense, TrueNAS, elitedesk]
 ---
 
 ## What happened

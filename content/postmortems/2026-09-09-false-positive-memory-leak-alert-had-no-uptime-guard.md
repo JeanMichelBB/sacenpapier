@@ -7,7 +7,7 @@ tags: [Prometheus, Alerting, Longhorn, instance-manager]
 
 ## What happened
 
-The `LonghornInstanceManagerMemoryLeak` alert — added after July's real instance-manager memory leak — fired again. Given the history, this looked like a recurrence of the same leak until the underlying pod turned out to have restarted recently, with memory usage nowhere near leak territory.
+The `LonghornInstanceManagerMemoryLeak` alert — added after [July's real instance-manager memory leak](/postmortems/2026-07-31-longhorn-instance-manager-leak) — fired again. Given the history, this looked like a recurrence of the same leak until the underlying pod turned out to have restarted recently, with memory usage nowhere near leak territory.
 
 ## Root cause
 

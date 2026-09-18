@@ -7,7 +7,7 @@ tags: [Longhorn, Snapshots, Memory, MySQL, Monitoring, Known Upstream Bug]
 
 ## What happened
 
-Revisiting the July 31st instance-manager memory leak turned up that its "structural fix" — a daily recurring job meant to keep the MySQL volume's snapshot chain capped at 7 — has never actually deleted a single snapshot. It ran successfully every night for 25 straight days, creating one snapshot each time and pruning zero, growing the chain from 0 to 25 and quietly reproducing the exact growth mechanism that froze Jellyfin in July, just ~60x slower (2.7 MiB/day now vs. ~170 MiB/day then).
+Revisiting [the July 31st instance-manager memory leak](/postmortems/2026-07-31-longhorn-instance-manager-leak) turned up that its "structural fix" — a daily recurring job meant to keep the MySQL volume's snapshot chain capped at 7 — has never actually deleted a single snapshot. It ran successfully every night for 25 straight days, creating one snapshot each time and pruning zero, growing the chain from 0 to 25 and quietly reproducing the exact growth mechanism that froze Jellyfin in July, just ~60x slower (2.7 MiB/day now vs. ~170 MiB/day then).
 
 ## Root cause
 
@@ -25,4 +25,4 @@ The ineffective `snapshot-cleanup` recurring job added during this investigation
 
 ## Prevention
 
-The July postmortem's monitoring recommendation — instance-manager memory growth and snapshot-count alerting — was the thing that actually caught this, and remains the real safety net: `LonghornInstanceManagerHighMemory` and `LonghornInstanceManagerMemoryLeak` will fire with a wide margin before this reaches anything near the 7.53GiB that caused the July freeze, at the current slow growth rate. Snapshot-chain length reduction via Longhorn's own recurring-job tooling is not currently achievable for this workload without hitting the open upstream bug; revisit on a future Longhorn version upgrade rather than continuing to work around it now.
+[The July postmortem's](/postmortems/2026-07-31-longhorn-instance-manager-leak) monitoring recommendation — instance-manager memory growth and snapshot-count alerting — was the thing that actually caught this, and remains the real safety net: `LonghornInstanceManagerHighMemory` and `LonghornInstanceManagerMemoryLeak` will fire with a wide margin before this reaches anything near the 7.53GiB that caused the July freeze, at the current slow growth rate. Snapshot-chain length reduction via Longhorn's own recurring-job tooling is not currently achievable for this workload without hitting the open upstream bug; revisit on a future Longhorn version upgrade rather than continuing to work around it now.

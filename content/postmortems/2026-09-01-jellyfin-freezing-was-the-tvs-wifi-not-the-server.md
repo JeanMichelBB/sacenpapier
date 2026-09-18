@@ -7,7 +7,7 @@ tags: [Jellyfin, Networking, LG TV, Monitoring, False Alarm]
 
 ## What happened
 
-Jellyfin playback kept freezing on the living room LG TV — the kind of intermittent, hard-to-pin-down issue that immediately points at the server: storage, CPU, the network path, Longhorn (given the July memory-leak incident on the same stack). Every server-side signal was checked live and came back clean.
+Jellyfin playback kept freezing on the living room LG TV — the kind of intermittent, hard-to-pin-down issue that immediately points at the server: storage, CPU, the network path, Longhorn (given [the July memory-leak incident](/postmortems/2026-07-31-longhorn-instance-manager-leak) on the same stack). Every server-side signal was checked live and came back clean.
 
 ## Root cause
 
@@ -19,4 +19,4 @@ No server-side fix, since there was nothing server-side to fix. Added a `NodeReb
 
 ## Prevention
 
-Worth remembering for next time: an intermittent playback issue on one specific client device is not automatically a server issue, especially right after a server-side incident (July's memory leak) primes the instinct to look there first. Check the client's own network health early, not last.
+Worth remembering for next time: an intermittent playback issue on one specific client device is not automatically a server issue, especially right after a server-side incident ([July's memory leak](/postmortems/2026-07-31-longhorn-instance-manager-leak)) primes the instinct to look there first. Check the client's own network health early, not last.
