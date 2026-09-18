@@ -272,6 +272,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                 selected={project.slug === selectedProject.slug}
                 onSelect={() => setSelectedSlug(project.slug)}
                 hideStatus={activeRole === "backend"}
+                liveLabel={t.live}
+                sourceLabel={t.source}
               />
             ))}
           </div>
@@ -469,8 +471,12 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             </button>
           ))}
           <span className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
-          <button
-            onClick={() => setActiveView(activeView === "infrastructure" ? "projects" : "infrastructure")}
+          <Link
+            href="/infrastructure"
+            onClick={(e) => {
+              e.preventDefault();
+              setActiveView(activeView === "infrastructure" ? "projects" : "infrastructure");
+            }}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
               activeView === "infrastructure"
                 ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
@@ -478,9 +484,13 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             }`}
           >
             {t.infrastructure}
-          </button>
-          <button
-            onClick={() => setActiveView(activeView === "about" ? "projects" : "about")}
+          </Link>
+          <Link
+            href="/about"
+            onClick={(e) => {
+              e.preventDefault();
+              setActiveView(activeView === "about" ? "projects" : "about");
+            }}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
               activeView === "about"
                 ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-200 dark:bg-zinc-200 dark:text-zinc-900"
@@ -488,7 +498,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             }`}
           >
             {t.aboutNav}
-          </button>
+          </Link>
         </div>
 
         <div className="flex flex-col gap-12">
