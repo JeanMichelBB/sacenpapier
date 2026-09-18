@@ -9,6 +9,7 @@ on:
       - "content/**"
       - "public/**"
       - "package.json"
+      - "package-lock.json"
       - "Dockerfile"
       - ".github/workflows/deploy.yml"
 
