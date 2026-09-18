@@ -21,7 +21,7 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 - [x] Distributed tracing with OpenTelemetry, exported to Tempo — backlog item #14, 2026-09-13
 - [x] Container image vulnerability scanning with Trivy in CI — backlog item #10, 2026-09-14
 - [x] Kubernetes resource requests/limits audit across every Deployment — backlog item #11, 2026-09-14
-- [ ] Privilege scoping: homelab-dashboard + kube-system/prometheus ServiceAccounts off `cluster-admin` — backlog items #18 + #19, 2026-09-13
+- [x] Privilege scoping: homelab-dashboard + kube-system/prometheus ServiceAccounts off `cluster-admin` — backlog items #18 + #19, 2026-09-13
 
 ## homelab-sacenpapier (dashboard)
 
