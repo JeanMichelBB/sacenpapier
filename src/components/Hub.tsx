@@ -19,6 +19,7 @@ import { LinkedinLink } from "@/components/LinkedinLink";
 import { EmailLink } from "@/components/EmailLink";
 import { PodBadge } from "@/components/PodBadge";
 import { strings, type Lang } from "@/lib/strings";
+import { skills as skillList } from "@/data/skills";
 
 function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
   const searchParams = useSearchParams();
@@ -40,6 +41,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [notFound, setNotFound] = useState<string | null>(null);
   const [updatesPage, setUpdatesPage] = useState(0);
   const [postmortemsPage, setPostmortemsPage] = useState(0);
+  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [lang, setLang] = useState<Lang>("en");
   const [activeRole, setActiveRole] = useState<Role | null>(null);
   const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure">("projects");
@@ -71,6 +73,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     if (pm) setPostmortemsPage(Math.max(0, parseInt(pm, 10) - 1));
     const up = params.get("up");
     if (up) setUpdatesPage(Math.max(0, parseInt(up, 10) - 1));
+    const sk = params.get("sk");
+    if (sk && skillList.some((s) => s.label === sk)) setSelectedSkill(sk);
     didInit.current = true;
 
     const savedScroll = sessionStorage.getItem("hub-scroll");
@@ -121,9 +125,10 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     if (tab !== "full-stack") params.set("tab", tab);
     if (postmortemsPage > 0) params.set("pm", String(postmortemsPage + 1));
     if (updatesPage > 0) params.set("up", String(updatesPage + 1));
+    if (selectedSkill) params.set("sk", selectedSkill);
     const qs = params.toString();
     window.history.replaceState(null, "", qs ? `/?${qs}` : "/");
-  }, [activeRole, activeView, postmortemsPage, updatesPage]);
+  }, [activeRole, activeView, postmortemsPage, updatesPage, selectedSkill]);
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
@@ -181,9 +186,14 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
 
   const selectedProject = sortedProjects.find((p) => p.slug === selectedSlug) ?? sortedProjects[0];
 
+  const activeSkill = selectedSkill ? skillList.find((s) => s.label === selectedSkill) : undefined;
+  const filteredUpdates = activeSkill
+    ? updates.filter((u) => u.tags.some((tag) => activeSkill.match.some((m) => m.toLowerCase() === tag.toLowerCase())))
+    : updates;
+
   const UPDATES_PER_PAGE = 4;
-  const updatesPageCount = Math.ceil(updates.length / UPDATES_PER_PAGE);
-  const pagedUpdates = updates.slice(updatesPage * UPDATES_PER_PAGE, (updatesPage + 1) * UPDATES_PER_PAGE);
+  const updatesPageCount = Math.max(1, Math.ceil(filteredUpdates.length / UPDATES_PER_PAGE));
+  const pagedUpdates = filteredUpdates.slice(updatesPage * UPDATES_PER_PAGE, (updatesPage + 1) * UPDATES_PER_PAGE);
   const POSTMORTEMS_PER_PAGE = 4;
   const postmortemsPageCount = Math.ceil(postmortems.length / POSTMORTEMS_PER_PAGE);
   const pagedPostmortems = postmortems.slice(
@@ -349,7 +359,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
 
           {updates[0] && (
             <div>
-              <div className="mb-2 flex items-center justify-between">
+              <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.updates}</h3>
                 {updatesPageCount > 1 && (
                   <div className="flex items-center gap-3">
@@ -379,10 +389,43 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                   </div>
                 )}
               </div>
-              <div className="flex min-h-[560px] flex-col gap-3">
-                {pagedUpdates.map((update) => (
-                  <PostCard key={update.slug} post={update} basePath="/updates" />
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                <button
+                  onClick={() => {
+                    setSelectedSkill(null);
+                    setUpdatesPage(0);
+                  }}
+                  className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
+                    !selectedSkill
+                      ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
+                      : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                  }`}
+                >
+                  {t.allSkills}
+                </button>
+                {skillList.map((skill) => (
+                  <button
+                    key={skill.label}
+                    onClick={() => {
+                      setSelectedSkill(selectedSkill === skill.label ? null : skill.label);
+                      setUpdatesPage(0);
+                    }}
+                    className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
+                      selectedSkill === skill.label
+                        ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
+                        : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                    }`}
+                  >
+                    {skill.label}
+                  </button>
                 ))}
+              </div>
+              <div className="flex min-h-[560px] flex-col gap-3">
+                {pagedUpdates.length > 0 ? (
+                  pagedUpdates.map((update) => <PostCard key={update.slug} post={update} basePath="/updates" />)
+                ) : (
+                  <p className="text-xs text-zinc-500 dark:text-zinc-500">{t.noSkillMatches}</p>
+                )}
               </div>
             </div>
           )}
