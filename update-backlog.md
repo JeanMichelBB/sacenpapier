@@ -42,8 +42,8 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 ## Apercu
 
-- [ ] Building the core app: CRA prototype, then a real Docker/React/FastAPI/MySQL rebuild — agent DB interface, contact-by-email, hashed passwords, an early forget-password page — 2023-11-18 to 2024-06-04 (deeper-pass find, 2026-09-18)
-- [ ] Marketing site: bilingual (en/fr) landing page with Service/Pricing/Basic-Intermediate-Advanced tiers, in a separate `first-look` app — 2024-09-12 to 2024-09-16 (deeper-pass find, 2026-09-18)
+- [x] Building the core app: CRA prototype, then a real Docker/React/FastAPI/MySQL rebuild — agent DB interface, contact-by-email, hashed passwords, an early forget-password page — 2023-11-18 to 2024-06-04 (deeper-pass find, 2026-09-18)
+- [x] Marketing site: bilingual (en/fr) landing page with Service/Pricing/Basic-Intermediate-Advanced tiers, in a separate `first-look` app — 2024-09-12 to 2024-09-16 (deeper-pass find, 2026-09-18)
 - [x] ~~Fictional timeline rotation~~ — **not shipped**: only a design spec + implementation plan
   exist (`docs/superpowers/specs/` and `/plans/`, both 2026-08-14); `day_offset`/
   `refresh_seeded_dates` were never actually added to `fastapi-backend/models.py`/`seed.py`. Not an
