@@ -37,8 +37,8 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 ## BotWhy
 
-- [ ] Building the core chat app: conversation API, first chatbox pages, validation, mobile, docker — 2024-08-11 to 2024-08-16 (deeper-pass find, 2026-09-18)
-- [ ] Cookie consent + comments/likes on trending conversations — 2026-03-24 (deeper-pass find, 2026-09-18)
+- [x] Building the core chat app: conversation API, first chatbox pages, validation, mobile, docker — 2024-08-11 to 2024-08-16 (deeper-pass find, 2026-09-18)
+- [x] Cookie consent + comments/likes on trending conversations — 2026-03-24 (deeper-pass find, 2026-09-18)
 
 ## Apercu
 
