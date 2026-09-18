@@ -433,8 +433,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               </button>
             </p>
           </div>
-          <div className="flex flex-col items-start gap-2 sm:items-end">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col items-start gap-2 sm:shrink-0 sm:items-end">
+            <div className="flex items-center gap-2">
               <GithubLink />
               <LinkedinLink />
               <EmailLink />
