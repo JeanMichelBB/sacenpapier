@@ -35,7 +35,10 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 ## Apercu
 
-- [ ] Fictional timeline rotation (design spec + implementation) — 2026-08-14
+- [x] ~~Fictional timeline rotation~~ — **not shipped**: only a design spec + implementation plan
+  exist (`docs/superpowers/specs/` and `/plans/`, both 2026-08-14); `day_offset`/
+  `refresh_seeded_dates` were never actually added to `fastapi-backend/models.py`/`seed.py`. Not an
+  Update candidate. Checked off as resolved (investigated, correctly not written up), not shipped.
 
 ## Legacy / origin infra
 
