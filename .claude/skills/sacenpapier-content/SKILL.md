@@ -54,6 +54,8 @@ After tagging the new update, check its tags against `src/data/skills.ts`:
 
 This is a judgment call each time, not a mechanical sync — the goal is that `skills.ts` stays a short, high-signal list of real skills, not a mirror of every tag ever used.
 
+Run `npm run check-skills` before shipping — it flags any tag used on 2+ updates that isn't matched by a `skills.ts` entry (and isn't in that script's own `IGNORE` list of project names / deliberately-skipped tags). CI runs this on every push to `main` too, so a missed skill fails the build loudly instead of sitting unbuttoned for years.
+
 ## 5. Ship it
 
 This repo pushes straight to `main`, which triggers GitHub Actions (build → Trivy scan → push to Docker Hub) → ArgoCD Image Updater (writes back a tag-bump commit to `main`) → the cluster rolls new pods automatically. There's no staging step — commit, push, and it deploys.

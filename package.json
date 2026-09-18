@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "new-postmortem": "node scripts/new-post.mjs postmortem",
-    "new-update": "node scripts/new-post.mjs update"
+    "new-update": "node scripts/new-post.mjs update",
+    "check-skills": "node scripts/check-skills.mjs"
   },
   "dependencies": {
     "next": "16.3.3",
