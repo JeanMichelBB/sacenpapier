@@ -71,15 +71,15 @@ export function InfrastructureContent({ lang }: { lang: Lang }) {
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.infraNetworkTitle}</h2>
         <p className="mb-6 max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{t.infraNetworkDesc}</p>
 
-        <div className="mb-3 rounded-xl border border-zinc-200 bg-white p-5 font-mono text-sm dark:border-zinc-800 dark:bg-zinc-900">
-          <div className="flex flex-wrap items-center gap-0">
-            <FlowNode label="Internet" sub="WAN" dim />
+        <div className="mb-3 overflow-x-auto rounded-xl border border-zinc-200 bg-gradient-to-b from-white to-zinc-50/60 p-6 dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-900/40">
+          <div className="flex min-w-max items-center gap-0 sm:min-w-0">
+            <FlowNode label="Internet" sub="WAN" variant="external" />
             <Arrow />
             <FlowNode label="ISP Router" sub="DHCP / gateway" />
             <Arrow />
-            <FlowNode label="OPNsense" sub="firewall" online={byName["tsopnsense"]?.online} />
+            <FlowNode label="OPNsense" sub="firewall" variant="firewall" online={byName["tsopnsense"]?.online} />
             <Arrow />
-            <FlowNode label="LAN" sub="physical nodes" />
+            <FlowNode label="LAN" sub="physical nodes" variant="lan" />
           </div>
         </div>
 
@@ -161,12 +161,47 @@ function Stat({ value, label, highlight }: { value: string | number | null; labe
   );
 }
 
-function FlowNode({ label, sub, dim, online }: { label: string; sub?: string; dim?: boolean; online?: boolean }) {
+function FlowNode({
+  label,
+  sub,
+  variant = "default",
+  online,
+}: {
+  label: string;
+  sub?: string;
+  variant?: "default" | "external" | "firewall" | "lan";
+  online?: boolean;
+}) {
+  const isFirewall = variant === "firewall";
   return (
-    <div className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${dim ? "border-transparent bg-transparent" : "border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/60"}`}>
+    <div
+      className={`relative flex shrink-0 items-center gap-2.5 rounded-xl border px-3.5 py-2.5 font-mono transition-colors ${
+        variant === "external"
+          ? "border-dashed border-zinc-300 bg-transparent dark:border-zinc-700"
+          : isFirewall
+            ? "border-green-300/70 bg-green-50/70 shadow-[0_0_0_3px_rgba(74,222,128,0.08)] dark:border-green-800/60 dark:bg-green-950/20"
+            : "border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/60"
+      }`}
+    >
+      {isFirewall && (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-green-600 dark:text-green-400">
+          <path
+            d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
       <div>
-        <div className={`text-xs font-semibold ${dim ? "text-zinc-400 dark:text-zinc-600" : "text-zinc-700 dark:text-zinc-200"}`}>{label}</div>
-        {sub && <div className="text-xs text-zinc-400 dark:text-zinc-600">{sub}</div>}
+        <div
+          className={`text-xs font-semibold ${
+            variant === "external" ? "text-zinc-400 dark:text-zinc-600" : "text-zinc-700 dark:text-zinc-200"
+          }`}
+        >
+          {label}
+        </div>
+        {sub && <div className="text-[11px] text-zinc-400 dark:text-zinc-600">{sub}</div>}
       </div>
       {online !== undefined && <LiveDot online={online} />}
     </div>
@@ -174,7 +209,14 @@ function FlowNode({ label, sub, dim, online }: { label: string; sub?: string; di
 }
 
 function Arrow() {
-  return <div className="hidden select-none px-1 text-xs text-zinc-300 dark:text-zinc-700 sm:block">──▶</div>;
+  return (
+    <div className="flex w-8 shrink-0 items-center justify-center text-zinc-300 dark:text-zinc-700">
+      <svg width="28" height="10" viewBox="0 0 28 10" fill="none">
+        <path d="M0 5h22" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M22 1l5 4-5 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </div>
+  );
 }
 
 function NodeCard({ hw, os, role, services, online, loading }: {
