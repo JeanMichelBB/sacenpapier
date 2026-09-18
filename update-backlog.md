@@ -42,7 +42,7 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 ## Legacy / origin infra
 
-- [ ] Early production infra: Terraform (OCI network + cluster) + Ansible deploy for BotWhy on Oracle Cloud, before the migration to the k3s homelab — 2025-03-05 through 2026-03-05 (`infra/OCI/oci-terraform-network`, `oci-terraform-cluster`, `oci-product-service`)
+- [x] Early production infra: Terraform (OCI network + cluster) + Ansible deploy for BotWhy on Oracle Cloud, before the migration to the k3s homelab — 2025-03-05 through 2026-03-05 (`infra/OCI/oci-terraform-network`, `oci-terraform-cluster`, `oci-product-service`)
 
 ## Notes / skipped
 
