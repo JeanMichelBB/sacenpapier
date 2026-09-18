@@ -39,7 +39,7 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 - [x] Building the core chat app: conversation API, first chatbox pages, validation, mobile, docker — 2024-08-11 to 2024-08-16 (deeper-pass find, 2026-09-18)
 - [x] Cookie consent + comments/likes on trending conversations — 2026-03-24 (deeper-pass find, 2026-09-18)
-- [ ] Rate limiting + message length validation on the AI endpoint (`slowapi`, 20/min) — 2026-07-03
+- [x] Rate limiting + message length validation on the AI endpoint (`slowapi`, 20/min) — 2026-07-03
   (skill-list audit find, 2026-09-18)
 
 ## Apercu
