@@ -42,6 +42,8 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 ## Apercu
 
+- [ ] Building the core app: CRA prototype, then a real Docker/React/FastAPI/MySQL rebuild — agent DB interface, contact-by-email, hashed passwords, an early forget-password page — 2023-11-18 to 2024-06-04 (deeper-pass find, 2026-09-18)
+- [ ] Marketing site: bilingual (en/fr) landing page with Service/Pricing/Basic-Intermediate-Advanced tiers, in a separate `first-look` app — 2024-09-12 to 2024-09-16 (deeper-pass find, 2026-09-18)
 - [x] ~~Fictional timeline rotation~~ — **not shipped**: only a design spec + implementation plan
   exist (`docs/superpowers/specs/` and `/plans/`, both 2026-08-14); `day_offset`/
   `refresh_seeded_dates` were never actually added to `fastapi-backend/models.py`/`seed.py`. Not an
@@ -56,10 +58,10 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 - `infra/homelab` has no commit history (working tree is fully uncommitted/staged) — can't mine
   it via git log. Its `docs/*.md` incident writeups look like they already fed the Postmortems
   section, not Updates. Revisit only if the user wants something specific documented from it.
-- PopRoom and the rest of Apercu's feature history is already well covered by existing Update
-  posts — no further gaps found there. A deeper full-history pass on BotWhy and x (2026-09-18)
-  found 4 more gaps, added above; both repos' remaining commits (credit system, admin UI, voice
-  mode, trending moderation, notifications/lists/explore/bookmarks) are already covered.
+- A deeper full-history pass on BotWhy and x (2026-09-18) found 4 gaps, shipped; both repos'
+  remaining commits (credit system, admin UI, voice mode, trending moderation, notifications/
+  lists/explore/bookmarks) are already covered. A same-day deeper pass on PopRoom (38 commits, all
+  already covered — no gaps) and Apercu (73 commits) found 2 more gaps in Apercu, added above.
 - `sacenpapier` (the hub itself) and `shared-mysql`'s own repo history are mostly meta/plumbing
   already reflected in other Updates (GitOps rollout, per-app MySQL users) — no standalone
   candidate worth adding.
