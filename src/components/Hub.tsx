@@ -333,15 +333,17 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                 <div className="text-sm font-medium text-zinc-900 dark:text-white">{postmortems[0].title}</div>
                 <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{postmortems[0].summary}</p>
               </Link>
-              <button
-                onClick={() => {
+              <Link
+                href="/postmortems"
+                onClick={(e) => {
+                  e.preventDefault();
                   setActiveRole("backend");
                   setActiveView("projects");
                 }}
-                className="mt-2 w-full rounded-lg border border-zinc-200 py-2 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                className="mt-2 block w-full rounded-lg border border-zinc-200 py-2 text-center text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
               >
                 {t.nextPage}
-              </button>
+              </Link>
             </div>
           )}
 

@@ -15,5 +15,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: u.date,
   }));
 
-  return [{ url: base, changeFrequency: "weekly" as const }, ...postmortemEntries, ...updateEntries];
+  return [
+    { url: base, changeFrequency: "weekly" as const },
+    { url: `${base}/postmortems`, changeFrequency: "weekly" as const },
+    { url: `${base}/updates`, changeFrequency: "weekly" as const },
+    ...postmortemEntries,
+    ...updateEntries,
+  ];
 }
