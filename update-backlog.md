@@ -31,7 +31,7 @@ Work top to bottom. Check an item off and commit that checkbox update as soon as
 
 ## x
 
-- [ ] Direct messages: search + send, styled — 2024-05-14 to 2024-05-19
+- [x] Direct messages: search + send, styled — 2024-05-14 to 2024-05-19
 
 ## Apercu
 
