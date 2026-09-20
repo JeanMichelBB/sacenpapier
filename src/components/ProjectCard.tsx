@@ -1,4 +1,5 @@
 import { Project } from "@/data/projects";
+import { getTagLayer, TAG_LAYER_DOT } from "@/lib/tagLayer";
 
 type Props = {
   project: Project;
@@ -36,14 +37,18 @@ export function ProjectCard({ project, selected, onSelect, hideStatus, liveLabel
           )}
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {project.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-md bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
-            >
-              {tag}
-            </span>
-          ))}
+          {project.tags.map((tag) => {
+            const layer = getTagLayer(tag);
+            return (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1.5 rounded-md bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+              >
+                {layer && <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${TAG_LAYER_DOT[layer]}`} />}
+                {tag}
+              </span>
+            );
+          })}
         </div>
       </button>
       <div className="flex gap-4 border-t border-zinc-100 px-4 py-2.5 text-xs dark:border-zinc-800/60">

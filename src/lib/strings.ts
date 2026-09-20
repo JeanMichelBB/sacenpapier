@@ -2,7 +2,7 @@ export type Lang = "en" | "fr";
 
 export const strings = {
   en: {
-    tagline: "A collection of personal projects — web apps, infra, and experiments.",
+    tagline: "Four live products, a homelab I run and occasionally break, and a public log of what went wrong and why.",
     status: "Not actively job hunting — open to interesting conversations.",
     notFoundSuffix: "does not exist.",
     projects: "Projects",
@@ -17,6 +17,7 @@ export const strings = {
     noSkillMatches: "No updates tagged with this skill yet.",
     live: "Live ↗",
     source: "Source",
+    projectPreviewHint: "Click a project to preview it live below.",
     footer: "Built with Next.js · Deployed on k3s",
     roleFullStack: "Full-stack",
     roleFrontend: "Frontend",
@@ -40,6 +41,7 @@ export const strings = {
     infraStatPods: "pods running",
     infraStatK3sNodes: "k3s nodes",
     infraStatProjects: "live products",
+    infraLiveCaption: "Live telemetry, pulled from the cluster — refreshes every 30s.",
     infraNetworkTitle: "Physical Network",
     infraNetworkDesc: "All physical machines sit behind OPNsense on a home LAN. Internet traffic leaving the homelab goes exclusively through a WireGuard VPN on the main server — nothing else has a direct outbound internet path.",
     infraTailscaleTitle: "Tailscale Overlay",
@@ -54,7 +56,7 @@ export const strings = {
     infraFailed: "failed",
   },
   fr: {
-    tagline: "Une collection de projets personnels — applications web, infra et expérimentations.",
+    tagline: "Quatre produits en ligne, un homelab que je gère (et casse à l'occasion), et un journal public de ce qui a mal tourné et pourquoi.",
     status: "Pas en recherche active d'emploi — ouvert aux discussions intéressantes.",
     notFoundSuffix: "n'existe pas.",
     projects: "Projets",
@@ -69,6 +71,7 @@ export const strings = {
     noSkillMatches: "Aucune mise à jour pour cette compétence pour l'instant.",
     live: "En ligne ↗",
     source: "Source",
+    projectPreviewHint: "Cliquez sur un projet pour le prévisualiser en direct ci-dessous.",
     footer: "Construit avec Next.js · Déployé sur k3s",
     roleFullStack: "Full-stack",
     roleFrontend: "Frontend",
@@ -92,6 +95,7 @@ export const strings = {
     infraStatPods: "pods actifs",
     infraStatK3sNodes: "nœuds k3s",
     infraStatProjects: "produits en ligne",
+    infraLiveCaption: "Télémétrie en direct, tirée du cluster — actualisée toutes les 30s.",
     infraNetworkTitle: "Réseau physique",
     infraNetworkDesc: "Toutes les machines physiques sont derrière OPNsense sur le réseau local. Le trafic sortant du homelab passe exclusivement par un VPN WireGuard sur le serveur principal — rien d'autre n'a d'accès internet direct.",
     infraTailscaleTitle: "Superposition Tailscale",

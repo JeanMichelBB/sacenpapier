@@ -274,6 +274,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         </div>
       ) : (
         <>
+          <p className="mb-3 text-xs text-zinc-400 dark:text-zinc-600">{t.projectPreviewHint}</p>
           <div className="mb-4 grid gap-3 sm:grid-cols-2">
             {sortedProjects.map((project) => (
               <ProjectCard
@@ -476,17 +477,12 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               </button>
             </p>
           </div>
-          <div className="flex flex-col items-start gap-2 sm:shrink-0 sm:items-end">
-            <div className="flex items-center gap-2">
-              <GithubLink />
-              <LinkedinLink />
-              <EmailLink />
-              <LanguageToggle lang={lang} onChange={changeLang} />
-              <ThemeToggle />
-            </div>
-            <p className="max-w-[260px] text-left text-xs leading-snug text-zinc-500 dark:text-zinc-600 sm:max-w-[220px] sm:text-right">
-              {t.status}
-            </p>
+          <div className="flex items-center gap-2 sm:shrink-0">
+            <GithubLink />
+            <LinkedinLink />
+            <EmailLink />
+            <LanguageToggle lang={lang} onChange={changeLang} />
+            <ThemeToggle />
           </div>
         </header>
 

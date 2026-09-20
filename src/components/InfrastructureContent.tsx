@@ -59,11 +59,18 @@ export function InfrastructureContent({ lang }: { lang: Lang }) {
   return (
     <div>
       {/* Stat strip */}
-      <div className="mb-12 grid grid-cols-2 gap-4 rounded-xl border border-zinc-200 bg-white p-6 sm:grid-cols-4 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="mb-2 grid grid-cols-2 gap-4 rounded-xl border border-zinc-200 bg-white p-6 sm:grid-cols-4 dark:border-zinc-800 dark:bg-zinc-900">
         <Stat value={loading ? null : `${onlineCount}/${nodes.length || 6}`} label={t.infraStatNodes} />
         <Stat value={loading ? null : (k3s?.pods.running ?? "—")} label={t.infraStatPods} highlight />
         <Stat value={loading ? null : (k3s?.nodes.length ?? "—")} label={t.infraStatK3sNodes} />
         <Stat value="4" label={t.infraStatProjects} />
+      </div>
+      <div className="mb-12 flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-600">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
+        </span>
+        {t.infraLiveCaption}
       </div>
 
       {/* Physical Network */}
