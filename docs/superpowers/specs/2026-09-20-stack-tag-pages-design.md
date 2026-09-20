@@ -69,6 +69,12 @@ least one match:
 3. **Postmortems** — `PostCard` list (same as the homepage Postmortems feed), filtered to
    `postmortem.tags.includes(tag)`. This is new — postmortems have no tag-filtered view today.
 
+The page is English-only chrome (page title, section headers, "Back home"), like the existing
+`/updates/[slug]` and `/postmortems/[slug]` detail pages — this site's precedent is that
+standalone content-detail routes aren't bilingual, only the Hub's own views (`/`, `/about`,
+`/infrastructure`) are. `BackLink` (the existing `"← sacenpapier.org"` client component used by
+those detail pages) is reused here rather than a new component.
+
 No pagination on stack pages initially — tag-filtered lists are expected to be short (YAGNI;
 add pagination later if a tag's list actually grows long enough to need it).
 
@@ -93,6 +99,23 @@ The Updates section reverts to a plain chronological, paginated list — matchin
 Postmortems section already behaves. Topic-based browsing now lives entirely on `/stack` pages
 instead of being duplicated in place on the homepage.
 
+**Standalone `/updates` list page — same treatment.** Found during file-structure mapping: there
+is a *second*, independent skill-filter implementation at `src/components/PostListPage.tsx`
+(shared by the standalone `/updates` and `/postmortems` routes), gated by
+`showSkillFilter = basePath === "/updates"`, using its own `?skill=` query param — separate code
+from Hub.tsx's, same pattern. For the same consistency reason, remove:
+- The `showSkillFilter` / `activeSkill` / `filteredPosts` logic and the `skills.ts` import
+- The skill-chip filter row JSX (the "All" button + per-skill links)
+- The `currentSkill` prop (and its `skill` search-param wiring in `src/app/updates/page.tsx`)
+- The `skill` param handling in `pageHref`
+
+`/updates` becomes a plain paginated list, matching `/postmortems`'s existing behavior — both
+routes end up sharing identical (no-filter) behavior through the same `PostListPage` component.
+
+The `noSkillMatches` empty-state message is used by `PostListPage` for *any* empty list, not just
+an empty filter result — replace it with a generic `noPosts` string ("Nothing here yet." / FR
+equivalent) rather than deleting the empty state outright.
+
 **`skills.ts` — repurposed, not deleted.** It's no longer used for homepage Updates filtering,
 but stays as the curated tech list for the About page's "What I work with" pills — a short,
 hand-picked list is still worth keeping there (vs. showing every raw tag including non-tech
@@ -100,10 +123,12 @@ ones like "Demo" or "Homelab"). Each pill links to `/stack/<slug of skill.match[
 skill's first/primary underlying tag — replacing today's `/updates?skill=` link target, which
 no longer exists once the in-place filter is removed.
 
-**i18n cleanup (`strings.ts`):** remove now-unused `allSkills` and `noSkillMatches` (en + fr).
-`aboutStackTitle` is unaffected and stays. New minimal chrome on the stack page (back-home link,
-section headers) reuses existing strings (`t.backHome`, `t.projects`, `t.updates`,
-`t.postmortems`) — no new translation keys needed for the page itself.
+**i18n cleanup (`strings.ts`):** remove now-unused `allSkills` (en + fr). Rename `noSkillMatches`
+to `noPosts` with generic copy ("Nothing here yet." / "Rien ici pour l'instant.") since it's a
+shared empty-state string, not skill-specific. `aboutStackTitle` is unaffected and stays. New
+minimal chrome on the stack page (back-home link, section headers) reuses existing strings
+(`t.backHome`, `t.projects`, `t.updates`, `t.postmortems`) — no new translation keys needed for
+the page itself.
 
 ## Error handling
 
@@ -124,5 +149,7 @@ section headers) reuses existing strings (`t.backHome`, `t.projects`, `t.updates
 - Click through each of the three chip-link locations (project card, update card, postmortem
   card) to confirm they land on the correct `/stack/<tag>` page.
 - Confirm the homepage Updates section still paginates correctly with the filter UI removed.
+- Confirm the standalone `/updates` page still paginates correctly with its filter UI removed,
+  and that `/updates?skill=...` links elsewhere in the codebase (if any survive) don't 404.
 - Confirm About page's "What I work with" pills link correctly post-change.
 - Both languages (en/fr) spot-checked for the (minimal) new/changed UI text.
