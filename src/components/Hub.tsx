@@ -428,19 +428,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         );
       })()}
 
-      {postmortems[0] && (
-        <div className="mt-8">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.postmortems}</h3>
-          <Link
-            href={`/postmortems/${postmortems[0].slug}`}
-            className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
-          >
-            <div className="text-sm font-medium text-zinc-900 dark:text-white">{postmortems[0].title}</div>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{postmortems[0].summary}</p>
-          </Link>
-        </div>
-      )}
-
       {allDocs[0] && (
         <div className="mt-8">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.docsNav}</h3>
