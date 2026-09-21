@@ -8,5 +8,5 @@ resources:
 
 images:
   - name: jeanmichelbb/hub
-    newTag: 94241fa3483d7adadf1f6051251c6d58c752dea4
+    newTag: b23111ba9b15d57ab95c354b0845a657ff6565b3
     newName: jeanmichelbb/hub
