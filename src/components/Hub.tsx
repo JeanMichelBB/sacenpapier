@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { projects, type Role } from "@/data/projects";
+import { projects } from "@/data/projects";
 import { Postmortem } from "@/lib/postmortems";
 import { Update } from "@/lib/updates";
 import { ProjectCard } from "@/components/ProjectCard";
@@ -40,10 +40,11 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [crushed, setCrushed] = useState(false);
   const [notFound, setNotFound] = useState<string | null>(null);
   const [postmortemsPage, setPostmortemsPage] = useState(0);
+  const [updatesPage, setUpdatesPage] = useState(0);
+  const [docSkillFilter, setDocSkillFilter] = useState<string | null>(null);
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [lang, setLang] = useState<Lang>("en");
-  const [activeRole, setActiveRole] = useState<Role | null>(null);
-  const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure">("projects");
+  const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure" | "postmortems" | "documentation">("projects");
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
   const [backendPing, setBackendPing] = useState<{ name: string; ms: number | null; ok: boolean }[] | null>(null);
   const [pingTick, setPingTick] = useState(0);
@@ -63,13 +64,13 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tab = params.get("tab");
-    if (tab === "frontend" || tab === "backend") {
-      setActiveRole(tab);
-    } else if (tab === "infrastructure" || tab === "about") {
+    if (tab === "infrastructure" || tab === "about" || tab === "postmortems" || tab === "documentation") {
       setActiveView(tab);
     }
     const pm = params.get("pm");
     if (pm) setPostmortemsPage(Math.max(0, parseInt(pm, 10) - 1));
+    const up = params.get("up");
+    if (up) setUpdatesPage(Math.max(0, parseInt(up, 10) - 1));
     const sk = params.get("sk");
     if (sk && skillList.some((s) => s.label === sk)) setSelectedSkill(sk);
     didInit.current = true;
@@ -117,14 +118,14 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   // entries), so whatever URL is current when you click away is what back restores.
   useEffect(() => {
     if (!didInit.current) return;
-    const tab = activeView !== "projects" ? activeView : (activeRole ?? "full-stack");
     const params = new URLSearchParams();
-    if (tab !== "full-stack") params.set("tab", tab);
+    if (activeView !== "projects") params.set("tab", activeView);
     if (postmortemsPage > 0) params.set("pm", String(postmortemsPage + 1));
+    if (updatesPage > 0) params.set("up", String(updatesPage + 1));
     if (selectedSkill) params.set("sk", selectedSkill);
     const qs = params.toString();
     window.history.replaceState(null, "", qs ? `/?${qs}` : "/");
-  }, [activeRole, activeView, postmortemsPage, selectedSkill]);
+  }, [activeView, postmortemsPage, updatesPage, selectedSkill]);
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
@@ -141,7 +142,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   }
 
   useEffect(() => {
-    if (activeRole !== "backend") return;
     let cancelled = false;
     function poll() {
       setPinging(true);
@@ -167,20 +167,11 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
       cancelled = true;
       clearInterval(interval);
     };
-  }, [activeRole]);
+  }, []);
 
   const t = strings[lang];
 
-  const sortedProjects =
-    activeRole
-      ? [...projects].sort((a, b) => {
-          const scoreA = a.focus.indexOf(activeRole);
-          const scoreB = b.focus.indexOf(activeRole);
-          return (scoreA === -1 ? 99 : scoreA) - (scoreB === -1 ? 99 : scoreB);
-        })
-      : projects;
-
-  const selectedProject = sortedProjects.find((p) => p.slug === selectedSlug) ?? sortedProjects[0];
+  const selectedProject = projects.find((p) => p.slug === selectedSlug) ?? projects[0];
 
   const activeSkill = selectedSkill ? skillList.find((s) => s.label === selectedSkill) : undefined;
   const matchesSkill = (tags: string[]) =>
@@ -188,11 +179,197 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const matchingProjects = activeSkill ? projects.filter((p) => matchesSkill(p.tags)) : [];
   const matchingUpdates = activeSkill ? updates.filter((u) => matchesSkill(u.tags)) : [];
   const matchingPostmortems = activeSkill ? postmortems.filter((p) => matchesSkill(p.tags)) : [];
-  const POSTMORTEMS_PER_PAGE = 4;
+  const POSTMORTEMS_PER_PAGE = 6;
   const postmortemsPageCount = Math.ceil(postmortems.length / POSTMORTEMS_PER_PAGE);
   const pagedPostmortems = postmortems.slice(
     postmortemsPage * POSTMORTEMS_PER_PAGE,
     (postmortemsPage + 1) * POSTMORTEMS_PER_PAGE
+  );
+  const activeDocSkill = docSkillFilter ? skillList.find((s) => s.label === docSkillFilter) : undefined;
+  const filteredUpdates = activeDocSkill
+    ? updates.filter((u) => u.tags.some((tag) => activeDocSkill.match.some((m) => m.toLowerCase() === tag.toLowerCase())))
+    : updates;
+  const UPDATES_PER_PAGE = 6;
+  const updatesPageCount = Math.max(1, Math.ceil(filteredUpdates.length / UPDATES_PER_PAGE));
+  const pagedUpdates = filteredUpdates.slice(updatesPage * UPDATES_PER_PAGE, (updatesPage + 1) * UPDATES_PER_PAGE);
+
+  const postmortemsSection = (
+    <section>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.postmortems}</h2>
+        {postmortemsPageCount > 1 && (
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setPostmortemsPage((p) => Math.max(0, p - 1))}
+              disabled={postmortemsPage === 0}
+              aria-label="Previous page"
+              className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600 tabular-nums">
+              {postmortemsPage + 1} / {postmortemsPageCount}
+            </span>
+            <button
+              onClick={() => setPostmortemsPage((p) => Math.min(postmortemsPageCount - 1, p + 1))}
+              disabled={postmortemsPage >= postmortemsPageCount - 1}
+              aria-label="Next page"
+              className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col gap-3">
+        {pagedPostmortems.map((postmortem) => (
+          <PostCard key={postmortem.slug} post={postmortem} basePath="/postmortems" />
+        ))}
+      </div>
+      {postmortemsPageCount > 1 && (
+        <div className="mt-6 flex items-center justify-center gap-3">
+          <button
+            onClick={() => {
+              setPostmortemsPage((p) => Math.max(0, p - 1));
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            disabled={postmortemsPage === 0}
+            aria-label="Previous page"
+            className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600 tabular-nums">
+            {postmortemsPage + 1} / {postmortemsPageCount}
+          </span>
+          <button
+            onClick={() => {
+              setPostmortemsPage((p) => Math.min(postmortemsPageCount - 1, p + 1));
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            disabled={postmortemsPage >= postmortemsPageCount - 1}
+            aria-label="Next page"
+            className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </section>
+  );
+
+  const documentationSection = (
+    <section>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.documentationNav}</h2>
+        {updatesPageCount > 1 && (
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setUpdatesPage((p) => Math.max(0, p - 1))}
+              disabled={updatesPage === 0}
+              aria-label="Previous page"
+              className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600 tabular-nums">
+              {updatesPage + 1} / {updatesPageCount}
+            </span>
+            <button
+              onClick={() => setUpdatesPage((p) => Math.min(updatesPageCount - 1, p + 1))}
+              disabled={updatesPage >= updatesPageCount - 1}
+              aria-label="Next page"
+              className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        <button
+          onClick={() => {
+            setDocSkillFilter(null);
+            setUpdatesPage(0);
+          }}
+          className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
+            !docSkillFilter
+              ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
+              : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+          }`}
+        >
+          {t.allSkills}
+        </button>
+        {skillList.map((skill) => (
+          <button
+            key={skill.label}
+            onClick={() => {
+              setDocSkillFilter(docSkillFilter === skill.label ? null : skill.label);
+              setUpdatesPage(0);
+            }}
+            className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
+              docSkillFilter === skill.label
+                ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            }`}
+          >
+            {skill.label}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-col gap-3">
+        {pagedUpdates.length > 0 ? (
+          pagedUpdates.map((update) => <PostCard key={update.slug} post={update} basePath="/updates" />)
+        ) : (
+          <p className="text-xs text-zinc-500 dark:text-zinc-500">{t.noSkillMatches}</p>
+        )}
+      </div>
+      {updatesPageCount > 1 && (
+        <div className="mt-6 flex items-center justify-center gap-3">
+          <button
+            onClick={() => {
+              setUpdatesPage((p) => Math.max(0, p - 1));
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            disabled={updatesPage === 0}
+            aria-label="Previous page"
+            className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600 tabular-nums">
+            {updatesPage + 1} / {updatesPageCount}
+          </span>
+          <button
+            onClick={() => {
+              setUpdatesPage((p) => Math.min(updatesPageCount - 1, p + 1));
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            disabled={updatesPage >= updatesPageCount - 1}
+            aria-label="Next page"
+            className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </section>
   );
 
   const projectsSection = (
@@ -200,7 +377,22 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
       <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest text-zinc-500">
         {t.projects}
       </h2>
-      {activeRole === "backend" && (() => {
+      <p className="mb-3 text-xs text-zinc-400 dark:text-zinc-600">{t.projectPreviewHint}</p>
+      <div className="mb-4 grid gap-3 sm:grid-cols-2">
+        {projects.map((project) => (
+          <ProjectCard
+            key={project.slug}
+            project={project}
+            selected={project.slug === selectedProject.slug}
+            onSelect={() => setSelectedSlug(project.slug)}
+            liveLabel={t.live}
+            sourceLabel={t.source}
+          />
+        ))}
+      </div>
+      <ProjectPreview project={selectedProject} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
+
+      {(() => {
         const ping = backendPing?.find((p) => p.name === selectedProject.name) ?? null;
         const spinner = (
           <svg className="h-7 w-7 animate-spin text-zinc-300 [animation-duration:3s] dark:text-zinc-700" fill="none" viewBox="0 0 24 24">
@@ -209,7 +401,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </svg>
         );
         return (
-          <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mb-4 flex items-center gap-2">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
@@ -260,76 +452,9 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         );
       })()}
 
-      {activeRole === "frontend" ? (
-        <div className="flex flex-col gap-6">
-          {sortedProjects.map((project) => (
-            <ProjectPreview key={project.slug} project={project} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
-          ))}
-        </div>
-      ) : (
-        <>
-          <p className="mb-3 text-xs text-zinc-400 dark:text-zinc-600">{t.projectPreviewHint}</p>
-          <div className="mb-4 grid gap-3 sm:grid-cols-2">
-            {sortedProjects.map((project) => (
-              <ProjectCard
-                key={project.slug}
-                project={project}
-                selected={project.slug === selectedProject.slug}
-                onSelect={() => setSelectedSlug(project.slug)}
-                hideStatus={activeRole === "backend"}
-                liveLabel={t.live}
-                sourceLabel={t.source}
-              />
-            ))}
-          </div>
-          <ProjectPreview project={selectedProject} lang={lang} liveLabel={t.live} sourceLabel={t.source} />
-        </>
-      )}
-
-      {activeRole === "backend" && (
-        <div className="mt-8">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.postmortems}</h3>
-            {postmortemsPageCount > 1 && (
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setPostmortemsPage((p) => Math.max(0, p - 1))}
-                  disabled={postmortemsPage === 0}
-                  aria-label="Previous page"
-                  className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 18l-6-6 6-6" />
-                  </svg>
-                </button>
-                <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600 tabular-nums">
-                  {postmortemsPage + 1} / {postmortemsPageCount}
-                </span>
-                <button
-                  onClick={() => setPostmortemsPage((p) => Math.min(postmortemsPageCount - 1, p + 1))}
-                  disabled={postmortemsPage >= postmortemsPageCount - 1}
-                  aria-label="Next page"
-                  className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="flex min-h-[560px] flex-col gap-3">
-            {pagedPostmortems.map((postmortem) => (
-              <PostCard key={postmortem.slug} post={postmortem} basePath="/postmortems" />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {activeRole === null && (
-        <div className="mt-8 flex flex-col gap-4">
-          {postmortems[0] && (
-            <div>
+      <div className="mt-8 flex flex-col gap-4">
+        {postmortems[0] && (
+          <div>
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.postmortems}</h3>
               <Link
                 href={`/postmortems/${postmortems[0].slug}`}
@@ -340,11 +465,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               </Link>
               <Link
                 href="/postmortems"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveRole("backend");
-                  setActiveView("projects");
-                }}
                 className="mt-2 block w-full rounded-lg border border-zinc-200 py-2 text-center text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
               >
                 {t.nextPage}
@@ -428,7 +548,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               )}
             </div>
         </div>
-      )}
     </section>
   );
 
@@ -483,32 +602,18 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </div>
         </header>
 
-        {/* Role toggle + page nav */}
+        {/* Page nav */}
         <div className="mb-8 flex flex-wrap items-center gap-2">
-          {(
-            [
-              [null, t.roleFullStack],
-              ["frontend", t.roleFrontend],
-              ["backend", t.roleBackend],
-            ] as const
-          ).map(([value, label]) => (
-            <button
-              key={label}
-              onClick={() => {
-                const alreadyActive = activeView === "projects" && activeRole === value;
-                setActiveRole(alreadyActive ? null : value);
-                setActiveView("projects");
-              }}
-              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                activeView === "projects" && activeRole === value
-                  ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
-                  : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-          <span className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
+          <button
+            onClick={() => setActiveView("projects")}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+              activeView === "projects"
+                ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            }`}
+          >
+            {t.roleFullStack}
+          </button>
           <Link
             href="/infrastructure"
             onClick={(e) => {
@@ -522,6 +627,34 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             }`}
           >
             {t.infrastructure}
+          </Link>
+          <Link
+            href="/postmortems"
+            onClick={(e) => {
+              e.preventDefault();
+              setActiveView(activeView === "postmortems" ? "projects" : "postmortems");
+            }}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+              activeView === "postmortems"
+                ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            }`}
+          >
+            {t.postmortems}
+          </Link>
+          <Link
+            href="/updates"
+            onClick={(e) => {
+              e.preventDefault();
+              setActiveView(activeView === "documentation" ? "projects" : "documentation");
+            }}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+              activeView === "documentation"
+                ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            }`}
+          >
+            {t.documentationNav}
           </Link>
           <Link
             href="/about"
@@ -544,6 +677,10 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             <AboutContent lang={lang} />
           ) : activeView === "infrastructure" ? (
             <InfrastructureContent lang={lang} />
+          ) : activeView === "postmortems" ? (
+            postmortemsSection
+          ) : activeView === "documentation" ? (
+            documentationSection
           ) : (
             projectsSection
           )}
