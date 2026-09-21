@@ -43,7 +43,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [docSkillFilter, setDocSkillFilter] = useState<string | null>(null);
   const [skillFilterOpen, setSkillFilterOpen] = useState(false);
   const [docSubView, setDocSubView] = useState<"all" | "postmortems" | "documentation">("all");
-  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [lang, setLang] = useState<Lang>("en");
   const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure" | "docs">("projects");
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
@@ -74,8 +73,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     }
     const dp = params.get("dp");
     if (dp) setDocsPage(Math.max(0, parseInt(dp, 10) - 1));
-    const sk = params.get("sk");
-    if (sk && skillList.some((s) => s.label === sk)) setSelectedSkill(sk);
     didInit.current = true;
 
     const savedScroll = sessionStorage.getItem("hub-scroll");
@@ -125,10 +122,9 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     if (activeView !== "projects") params.set("tab", activeView);
     if (activeView === "docs" && docSubView !== "all") params.set("sub", docSubView);
     if (docsPage > 0) params.set("dp", String(docsPage + 1));
-    if (selectedSkill) params.set("sk", selectedSkill);
     const qs = params.toString();
     window.history.replaceState(null, "", qs ? `/?${qs}` : "/");
-  }, [activeView, docSubView, docsPage, selectedSkill]);
+  }, [activeView, docSubView, docsPage]);
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
@@ -176,12 +172,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
 
   const selectedProject = projects.find((p) => p.slug === selectedSlug) ?? projects[0];
 
-  const activeSkill = selectedSkill ? skillList.find((s) => s.label === selectedSkill) : undefined;
-  const matchesSkill = (tags: string[]) =>
-    !!activeSkill && tags.some((tag) => activeSkill.match.some((m) => m.toLowerCase() === tag.toLowerCase()));
-  const matchingProjects = activeSkill ? projects.filter((p) => matchesSkill(p.tags)) : [];
-  const matchingUpdates = activeSkill ? updates.filter((u) => matchesSkill(u.tags)) : [];
-  const matchingPostmortems = activeSkill ? postmortems.filter((p) => matchesSkill(p.tags)) : [];
   const activeDocSkill = docSkillFilter ? skillList.find((s) => s.label === docSkillFilter) : undefined;
   const allDocs: { post: Postmortem | Update; basePath: "/postmortems" | "/updates" }[] = [
     ...postmortems.map((post) => ({ post, basePath: "/postmortems" as const })),
@@ -438,102 +428,61 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         );
       })()}
 
-      <div className="mt-8 flex flex-col gap-4">
-        {postmortems[0] && (
-          <div>
-              <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.postmortems}</h3>
-              <Link
-                href={`/postmortems/${postmortems[0].slug}`}
-                className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
-              >
-                <div className="text-sm font-medium text-zinc-900 dark:text-white">{postmortems[0].title}</div>
-                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{postmortems[0].summary}</p>
-              </Link>
-              <Link
-                href="/postmortems"
-                className="mt-2 block w-full rounded-lg border border-zinc-200 py-2 text-center text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-              >
-                {t.nextPage}
-              </Link>
-            </div>
-          )}
-
-          <div>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.aboutStackTitle}</h3>
-              <div className="mb-3 flex flex-wrap gap-1.5">
-                <button
-                  onClick={() => setSelectedSkill(null)}
-                  className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
-                    !selectedSkill
-                      ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
-                      : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-                  }`}
-                >
-                  {t.allSkills}
-                </button>
-                {skillList.map((skill) => (
-                  <button
-                    key={skill.label}
-                    onClick={() => setSelectedSkill(selectedSkill === skill.label ? null : skill.label)}
-                    className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
-                      selectedSkill === skill.label
-                        ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
-                        : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-                    }`}
-                  >
-                    {skill.label}
-                  </button>
-                ))}
-              </div>
-
-              {activeSkill ? (
-                <div className="flex flex-col gap-6">
-                  {matchingProjects.length === 0 && matchingUpdates.length === 0 && matchingPostmortems.length === 0 && (
-                    <p className="text-xs text-zinc-500 dark:text-zinc-500">{t.noSkillMatches}</p>
-                  )}
-                  {matchingProjects.length > 0 && (
-                    <div>
-                      <h4 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.projects}</h4>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {matchingProjects.map((project) => (
-                          <ProjectCard
-                            key={project.slug}
-                            project={project}
-                            selected={false}
-                            onSelect={() => {}}
-                            liveLabel={t.live}
-                            sourceLabel={t.source}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {matchingUpdates.length > 0 && (
-                    <div>
-                      <h4 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.updates}</h4>
-                      <div className="flex flex-col gap-3">
-                        {matchingUpdates.map((update) => (
-                          <PostCard key={update.slug} post={update} basePath="/updates" />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {matchingPostmortems.length > 0 && (
-                    <div>
-                      <h4 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.postmortems}</h4>
-                      <div className="flex flex-col gap-3">
-                        {matchingPostmortems.map((postmortem) => (
-                          <PostCard key={postmortem.slug} post={postmortem} basePath="/postmortems" />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <p className="text-xs text-zinc-400 dark:text-zinc-600">{t.skillEvidenceHint}</p>
-              )}
-            </div>
+      {postmortems[0] && (
+        <div className="mt-8">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.postmortems}</h3>
+          <Link
+            href={`/postmortems/${postmortems[0].slug}`}
+            className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
+          >
+            <div className="text-sm font-medium text-zinc-900 dark:text-white">{postmortems[0].title}</div>
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{postmortems[0].summary}</p>
+          </Link>
         </div>
+      )}
+
+      {allDocs[0] && (
+        <div className="mt-8">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.docsNav}</h3>
+          <Link
+            href={`${allDocs[0].basePath}/${allDocs[0].post.slug}`}
+            className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
+          >
+            <div className="text-sm font-medium text-zinc-900 dark:text-white">{allDocs[0].post.title}</div>
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{allDocs[0].post.summary}</p>
+          </Link>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {skillList.map((skill) => (
+              <Link
+                key={skill.label}
+                href="/postmortems"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveView("docs");
+                  setDocSkillFilter(skill.label);
+                  setSkillFilterOpen(true);
+                  setDocsPage(0);
+                }}
+                className="rounded-full border border-zinc-200 px-2.5 py-0.5 text-[11px] font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+              >
+                {skill.label}
+              </Link>
+            ))}
+          </div>
+          <div className="mt-2">
+            <Link
+              href="/postmortems"
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveView("docs");
+              }}
+              className="block w-full rounded-lg border border-zinc-200 py-2 text-center text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            >
+              {t.nextPage}
+            </Link>
+          </div>
+        </div>
+      )}
     </section>
   );
 
