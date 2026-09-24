@@ -1,8 +1,8 @@
 ---
 title: Jellyfin Freeze — Longhorn Instance-Manager Memory Leak
 date: 2026-07-31
-duration: 42 days to surface
-tags: [Longhorn, Memory Leak, Jellyfin, Monitoring]
+duration: 42 days to surface; recurred 55 days later
+tags: [Longhorn, Memory Leak, Jellyfin, Monitoring, Known Upstream Bug]
 ---
 
 ## What happened
@@ -20,3 +20,11 @@ Pruned the 430-snapshot chain down to a healthy count, which let the instance-ma
 ## Prevention
 
 Added monitoring on instance-manager memory growth and snapshot counts per volume so a similar pileup gets caught in days, not 42. This closes the loop on a failure chain that started with the [June 19th incident](/postmortems/2026-06-19-k3s-longhorn-disk-incident) — a Longhorn recurring job to auto-prune rebuild snapshots is the structural fix still worth adding.
+
+## Update (2026-09-24): the leak came back — this time a real Longhorn bug
+
+The instance-manager memory alert fired again on the same pod, now hosting the MySQL volume under a new PVC after it was recreated. Memory had reached 2.48GiB. This time the recurring-job/timeout mitigations above were confirmed innocent: `engine-replica-timeout` was still doing its job, and the snapshot count sat at a normal 20 — not another 430-snapshot pileup. (That recurring job's own "retain: 7" turned out to be a no-op the whole time regardless — see the [September 8th postmortem](/postmortems/2026-09-08-longhorn-snapshot-retention-was-never-working-a-recurring-job-that-only-creates) for that separate, still-open problem. It wasn't the cause of this spike.)
+
+With no pileup to blame, the actual cause turned out to be upstream: Longhorn v1.11.0 ships a confirmed gRPC proxy-connection-leak regression in `longhorn-instance-manager` — new Proxy service APIs introduced that version that don't close connections properly ([longhorn/longhorn#12643](https://github.com/longhorn/longhorn/issues/12643), [#12668](https://github.com/longhorn/longhorn/issues/12668), [#12573](https://github.com/longhorn/longhorn/issues/12573)). Left running, it OOMs the node in about a week. Fixed upstream in v1.11.1.
+
+Upgraded the cluster from v1.11.0 to v1.11.1: applied the new manifest, then discovered replicas migrate to new instance-managers automatically but the **engine** — and specifically the instance-manager process actually serving it, which is where the leaky proxy code lives — does not. Patching the volume's `spec.image` marks the engine "upgraded" without moving it off the old, still-buggy instance-manager pod; Longhorn's own DaemonSet rollout also skips replacing an instance-manager that's actively serving an attached engine, to avoid an I/O interruption. The fix that actually works is the blunt one: delete the old instance-manager pod outright, forcing the engine to re-home onto the instance-manager already running the new version. Verified all three cluster nodes on `v1.11.1` afterward, volume healthy throughout, ~40 seconds of degraded status during the swap, no data loss.
