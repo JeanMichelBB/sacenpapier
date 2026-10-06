@@ -46,6 +46,7 @@ jobs:
           context: .
           platforms: linux/amd64
           load: true
+          pull: true
           tags: hub:scan
           cache-from: type=gha,scope=hub
           cache-to: type=gha,mode=max,scope=hub
@@ -64,6 +65,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
+          pull: true
           tags: |
             jeanmichelbb/hub:latest
             jeanmichelbb/hub:${{ github.sha }}
