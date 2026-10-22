@@ -11,6 +11,7 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { ProjectPreview } from "@/components/ProjectPreview";
 import { AboutContent } from "@/components/AboutContent";
 import { InfrastructureContent } from "@/components/InfrastructureContent";
+import { HomelabDocsContent } from "@/components/HomelabDocsContent";
 import { PostCard } from "@/components/PostCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -44,7 +45,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   const [skillFilterOpen, setSkillFilterOpen] = useState(false);
   const [docSubView, setDocSubView] = useState<"all" | "postmortems" | "documentation">("all");
   const [lang, setLang] = useState<Lang>("en");
-  const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure" | "docs">("projects");
+  const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure" | "docs" | "homelabDocs">("projects");
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
   const [backendPing, setBackendPing] = useState<{ name: string; ms: number | null; ok: boolean }[] | null>(null);
   const [pingTick, setPingTick] = useState(0);
@@ -64,7 +65,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tab = params.get("tab");
-    if (tab === "infrastructure" || tab === "about" || tab === "docs") {
+    if (tab === "infrastructure" || tab === "about" || tab === "docs" || tab === "homelabDocs") {
       setActiveView(tab);
     }
     const sub = params.get("sub");
@@ -551,6 +552,20 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             {t.infrastructure}
           </Link>
           <Link
+            href="/documentation"
+            onClick={(e) => {
+              e.preventDefault();
+              setActiveView(activeView === "homelabDocs" ? "projects" : "homelabDocs");
+            }}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+              activeView === "homelabDocs"
+                ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+            }`}
+          >
+            {t.homelabDocsNav}
+          </Link>
+          <Link
             href="/postmortems"
             onClick={(e) => {
               e.preventDefault();
@@ -585,6 +600,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             <AboutContent lang={lang} />
           ) : activeView === "infrastructure" ? (
             <InfrastructureContent lang={lang} />
+          ) : activeView === "homelabDocs" ? (
+            <HomelabDocsContent />
           ) : activeView === "docs" ? (
             docsSection
           ) : (
