@@ -1,3 +1,5 @@
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
+
 const ENDPOINTS = [
   { name: "x", url: "https://xapi.sacenpapier.org/api/health" },
   { name: "PopRoom", url: "https://poproomapi.sacenpapier.org/api/health" },
@@ -10,7 +12,7 @@ export async function GET() {
     ENDPOINTS.map(async ({ name, url }) => {
       const start = performance.now();
       try {
-        const res = await fetch(url, { cache: "no-store" });
+        const res = await fetchWithTimeout(url, { cache: "no-store" });
         const ms = Math.round(performance.now() - start);
         return { name, ms, ok: res.ok };
       } catch {
