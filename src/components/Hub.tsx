@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { projects } from "@/data/projects";
 import { Postmortem } from "@/lib/postmortems";
@@ -13,13 +12,10 @@ import { AboutContent } from "@/components/AboutContent";
 import { InfrastructureContent } from "@/components/InfrastructureContent";
 import { HomelabDocsContent } from "@/components/HomelabDocsContent";
 import { PostCard } from "@/components/PostCard";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { LanguageToggle } from "@/components/LanguageToggle";
-import { GithubLink } from "@/components/GithubLink";
-import { LinkedinLink } from "@/components/LinkedinLink";
-import { EmailLink } from "@/components/EmailLink";
+import { SiteHeader } from "@/components/SiteHeader";
 import { PodBadge } from "@/components/PodBadge";
-import { strings, type Lang } from "@/lib/strings";
+import { strings } from "@/lib/strings";
+import { useLang } from "@/lib/useLang";
 import { skills as skillList } from "@/data/skills";
 
 function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
@@ -38,13 +34,12 @@ function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
 }
 
 export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updates: Update[] }) {
-  const [crushed, setCrushed] = useState(false);
   const [notFound, setNotFound] = useState<string | null>(null);
   const [docsPage, setDocsPage] = useState(0);
   const [docSkillFilter, setDocSkillFilter] = useState<string | null>(null);
   const [skillFilterOpen, setSkillFilterOpen] = useState(false);
   const [docSubView, setDocSubView] = useState<"all" | "postmortems" | "documentation">("all");
-  const [lang, setLang] = useState<Lang>("en");
+  const { lang, changeLang } = useLang();
   const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure" | "docs" | "homelabDocs">("projects");
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
   const [backendPing, setBackendPing] = useState<{ name: string; ms: number | null; ok: boolean }[] | null>(null);
@@ -128,20 +123,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   }, [activeView, docSubView, docsPage]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("lang");
-    if (saved === "en" || saved === "fr") {
-      setLang(saved);
-      document.documentElement.lang = saved;
-    }
-  }, []);
-
-  function changeLang(next: Lang) {
-    localStorage.setItem("lang", next);
-    document.documentElement.lang = next;
-    setLang(next);
-  }
-
-  useEffect(() => {
     let cancelled = false;
     function poll() {
       setPinging(true);
@@ -199,7 +180,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             [
               ["all", t.all],
               ["postmortems", t.postmortems],
-              ["documentation", t.documentationNav],
+              ["documentation", t.updates],
             ] as const
           ).map(([value, label]) => (
             <button
@@ -489,41 +470,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </div>
         )}
         {/* Header */}
-        <header className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="mb-2 flex items-center gap-3 text-3xl font-bold tracking-tight">
-              sacenpapier.org
-              <button onClick={() => setCrushed(true)} className="hidden sm:inline-flex shrink-0 transition-transform duration-150 hover:scale-110 active:scale-95">
-                <Image
-                  src={crushed ? "/img/Paper Bag Crush.png" : "/img/shopping-bag.png"}
-                  alt="sacenpapier logo"
-                  width={36}
-                  height={36}
-                  className="rounded-md"
-                />
-              </button>
-            </h1>
-            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
-              {t.tagline}
-              <button onClick={() => setCrushed(true)} className="sm:hidden shrink-0 transition-transform duration-150 hover:scale-110 active:scale-95">
-                <Image
-                  src={crushed ? "/img/Paper Bag Crush.png" : "/img/shopping-bag.png"}
-                  alt="sacenpapier logo"
-                  width={28}
-                  height={28}
-                  className="rounded-md"
-                />
-              </button>
-            </p>
-          </div>
-          <div className="flex items-center gap-2 sm:shrink-0">
-            <GithubLink />
-            <LinkedinLink />
-            <EmailLink />
-            <LanguageToggle lang={lang} onChange={changeLang} />
-            <ThemeToggle />
-          </div>
-        </header>
+        <SiteHeader variant="home" lang={lang} onChangeLang={changeLang} />
 
         {/* Page nav */}
         <div className="mb-8 flex flex-wrap items-center gap-2">
@@ -535,7 +482,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             }`}
           >
-            {t.roleFullStack}
+            {t.projects}
           </button>
           <Link
             href="/infrastructure"
@@ -577,7 +524,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             }`}
           >
-            {t.docsNav}
+            {t.writingNav}
           </Link>
           <Link
             href="/about"
@@ -595,7 +542,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </Link>
         </div>
 
-        <div className="flex flex-col gap-12">
+        <main className="flex flex-col gap-12">
           {activeView === "about" ? (
             <AboutContent lang={lang} />
           ) : activeView === "infrastructure" ? (
@@ -607,7 +554,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           ) : (
             projectsSection
           )}
-        </div>
+        </main>
 
         {/* Footer */}
         <footer className="mt-16 flex flex-col items-center gap-3 text-xs text-zinc-500 dark:text-zinc-600">

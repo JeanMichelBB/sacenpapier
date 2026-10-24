@@ -2,7 +2,11 @@ export type Lang = "en" | "fr";
 
 export const strings = {
   en: {
-    tagline: "Four live products, a homelab I run and occasionally break, and a public log of what went wrong and why.",
+    name: "Jean-Michel Bérubé",
+    role: "DevOps / Platform Engineer",
+    contactLabel: "Contact",
+    writingNav: "Writing",
+    tagline: "A homelab I built and operate — k3s, GitOps, observability — running four live products, documented in public when it breaks.",
     status: "Not actively job hunting — open to interesting conversations.",
     notFoundSuffix: "does not exist.",
     projects: "Projects",
@@ -61,7 +65,11 @@ export const strings = {
     infraFailed: "failed",
   },
   fr: {
-    tagline: "Quatre produits en ligne, un homelab que je gère (et casse à l'occasion), et un journal public de ce qui a mal tourné et pourquoi.",
+    name: "Jean-Michel Bérubé",
+    role: "Ingénieur DevOps / Plateforme",
+    contactLabel: "Contact",
+    writingNav: "Écrits",
+    tagline: "Un homelab que je construis et j'opère — k3s, GitOps, observabilité — faisant tourner quatre produits en ligne, documenté publiquement quand ça casse.",
     status: "Pas en recherche active d'emploi — ouvert aux discussions intéressantes.",
     notFoundSuffix: "n'existe pas.",
     projects: "Projets",

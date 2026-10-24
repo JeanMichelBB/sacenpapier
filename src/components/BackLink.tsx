@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-export function BackLink() {
+export function BackLink({ label = "← sacenpapier.org" }: { label?: string }) {
   const router = useRouter();
 
   return (
@@ -13,7 +13,7 @@ export function BackLink() {
       }}
       className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300"
     >
-      ← sacenpapier.org
+      {label}
     </button>
   );
 }

@@ -23,6 +23,8 @@
 # misc
 .DS_Store
 *.pem
+# macOS "keep both" duplicates, e.g. "file 2.tsx"
+* [0-9].*
 
 # debug
 npm-debug.log*

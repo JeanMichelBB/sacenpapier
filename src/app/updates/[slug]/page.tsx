@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllUpdates, getUpdate } from "@/lib/updates";
-import { BackLink } from "@/components/BackLink";
+import { DetailPageHeader } from "@/components/DetailPageHeader";
 
 export function generateStaticParams() {
   return getAllUpdates().map((p) => ({ slug: p.slug }));
@@ -48,8 +48,9 @@ export default async function UpdatePage({
   return (
     <div className="min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-white">
       <div className="mx-auto max-w-2xl px-6 py-16">
-        <BackLink />
+        <DetailPageHeader />
 
+        <main>
         <header className="mt-8 mb-10">
           <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-600">
             <span>{update.date}</span>
@@ -101,6 +102,7 @@ export default async function UpdatePage({
             </div>
           </section>
         )}
+        </main>
       </div>
     </div>
   );

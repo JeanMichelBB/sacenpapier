@@ -1,14 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { LanguageToggle } from "@/components/LanguageToggle";
-import { GithubLink } from "@/components/GithubLink";
-import { LinkedinLink } from "@/components/LinkedinLink";
-import { EmailLink } from "@/components/EmailLink";
+import { SiteHeader } from "@/components/SiteHeader";
 import { PostCard } from "@/components/PostCard";
-import { strings, type Lang } from "@/lib/strings";
+import { strings } from "@/lib/strings";
+import { useLang } from "@/lib/useLang";
 import { Post } from "@/lib/posts";
 import { skills as skillList } from "@/data/skills";
 
@@ -24,22 +20,7 @@ type Props = {
 };
 
 export function PostListPage({ titleKey, basePath, posts, currentPage, currentSkill }: Props) {
-  const [lang, setLang] = useState<Lang>("en");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("lang");
-    if (saved === "en" || saved === "fr") {
-      setLang(saved);
-      document.documentElement.lang = saved;
-    }
-  }, []);
-
-  function changeLang(next: Lang) {
-    localStorage.setItem("lang", next);
-    document.documentElement.lang = next;
-    setLang(next);
-  }
-
+  const { lang, changeLang } = useLang();
   const t = strings[lang];
   const showSkillFilter = basePath === "/updates";
   const activeSkill = showSkillFilter ? skillList.find((s) => s.label === currentSkill) : undefined;
@@ -65,25 +46,9 @@ export function PostListPage({ titleKey, basePath, posts, currentPage, currentSk
   return (
     <div className="min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-white">
       <div className="mx-auto max-w-3xl px-6 py-16">
-        <header className="mb-12 flex items-start justify-between gap-4">
-          <div>
-            <Link
-              href="/"
-              className="mb-2 inline-block text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-200"
-            >
-              {t.backHome}
-            </Link>
-            <h1 className="text-3xl font-bold tracking-tight">{t[titleKey]}</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <GithubLink />
-            <LinkedinLink />
-            <EmailLink />
-            <LanguageToggle lang={lang} onChange={changeLang} />
-            <ThemeToggle />
-          </div>
-        </header>
+        <SiteHeader variant="sub" title={t[titleKey]} lang={lang} onChangeLang={changeLang} />
 
+        <main>
         {showSkillFilter && (
           <div className="mb-8 flex flex-wrap gap-2">
             <Link
@@ -153,6 +118,7 @@ export function PostListPage({ titleKey, basePath, posts, currentPage, currentSk
             )}
           </nav>
         )}
+        </main>
       </div>
     </div>
   );
