@@ -41,3 +41,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large point-in-time review artifacts; keep the markdown, not the binaries
+/docs/review/screens/
+/docs/review/lighthouse/
+/docs/review/axe/
