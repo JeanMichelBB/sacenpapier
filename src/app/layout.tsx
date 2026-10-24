@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeInit } from "@/components/ThemeInit";
-import { CookieBanner } from "@/components/CookieBanner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,7 +13,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const description = "A collection of personal projects — web apps, infra, and experiments.";
+const description =
+  "DevOps / Platform Engineer — a k3s homelab I built and operate, running four live products, documented in public when it breaks.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sacenpapier.org"),
@@ -54,7 +54,6 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-white">
         <ThemeInit />
         {children}
-        <CookieBanner />
       </body>
     </html>
   );

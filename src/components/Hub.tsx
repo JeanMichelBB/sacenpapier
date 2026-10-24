@@ -399,20 +399,21 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               </div>
               <div>
                 <div className="flex h-8 items-center text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.endpoints}</div>
-                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatEndpoints}</div>
+                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatEndpoints}*</div>
               </div>
               <div>
                 <div className="flex h-8 items-center text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.commits}</div>
-                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatCommits}</div>
+                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatCommits}*</div>
               </div>
             </div>
+            <p className="mt-4 text-[11px] text-zinc-400 dark:text-zinc-600">* {t.snapshotNote}</p>
           </div>
         );
       })()}
 
       {allDocs[0] && (
         <div className="mt-8">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.docsNav}</h3>
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.writingNav}</h3>
           <Link
             href={`${allDocs[0].basePath}/${allDocs[0].post.slug}`}
             className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
@@ -420,24 +421,6 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             <div className="text-sm font-medium text-zinc-900 dark:text-white">{allDocs[0].post.title}</div>
             <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{allDocs[0].post.summary}</p>
           </Link>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {skillList.map((skill) => (
-              <Link
-                key={skill.label}
-                href="/postmortems"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveView("docs");
-                  setDocSkillFilter(skill.label);
-                  setSkillFilterOpen(true);
-                  setDocsPage(0);
-                }}
-                className="rounded-full border border-zinc-200 px-2.5 py-0.5 text-[11px] font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-              >
-                {skill.label}
-              </Link>
-            ))}
-          </div>
           <div className="mt-2">
             <Link
               href="/postmortems"

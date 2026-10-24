@@ -31,9 +31,9 @@ export const devices: Device[] = [
   {
     model: "HP EliteDesk 800 G2 DM",
     os: "Ubuntu Server 24.04",
-    why: "Main server. Single point of failure for most of the homelab at once — does two separate jobs, split below.",
+    why: "Main server — does two separate jobs, split below.",
     network:
-      "Tailscale-only, plus a LAN fallback address and a WAN SSH fallback. nginx-proxy here routes *.sacenpapier.org. Only Gluetun's VPN tunnel is exposed outbound to the internet — nothing else here is reachable except over Tailscale.",
+      "Tailscale-only for normal access. nginx-proxy here routes *.sacenpapier.org. One VPN tunnel handles outbound egress for a single downstream service; everything else stays mesh-only.",
     subgroups: [
       {
         name: "k3s control-plane",
@@ -53,7 +53,7 @@ export const devices: Device[] = [
             slug: "homepage",
             name: "Homepage",
             detail:
-              "The live dashboard — what you actually open from the Mac shortcut for a quick glance at everything. Services are Docker-label auto-discovered rather than hand-maintained in services.yaml, so a new container with the right labels shows up without an edit. Widgets poll live APIs (Gluetun's VPN status, qBittorrent, the *arr stack, Portainer, Uptime Kuma, OpenRouter usage) directly, so what you see here reflects current state, not a cached snapshot.",
+              "The live dashboard — what you actually open from the Mac shortcut for a quick glance at everything. Services are Docker-label auto-discovered rather than hand-maintained in services.yaml, so a new container with the right labels shows up without an edit. Widgets poll live APIs (VPN status, the media stack, container management, uptime checks, LLM usage) directly, so what you see here reflects current state, not a cached snapshot.",
           },
           {
             slug: "gpu-proxy",
@@ -77,7 +77,7 @@ export const devices: Device[] = [
             slug: "nginx-proxy",
             name: "nginx-proxy",
             detail:
-              "The reverse proxy in front of this host, routing *.sacenpapier.org subdomains (Jellyfin, Seerr, Homepage) to the right local port, and handling the Let's Encrypt side of TLS. Kept deliberately general here rather than naming exact internals.",
+              "The reverse proxy in front of this host, routing *.sacenpapier.org subdomains (media services, Homepage) to the right local port, and handling the Let's Encrypt side of TLS. Kept deliberately general here rather than naming exact internals.",
           },
           {
             slug: "cloudflare-ddns",
@@ -294,7 +294,7 @@ export const devices: Device[] = [
     os: "Windows 11",
     why: "Lowest impact: usually asleep already, only affects local LLM + game streaming.",
     network:
-      "Tailscale-only, plus a LAN fallback address for Wake-on-LAN. gpu-proxy on elitedesk wakes it over LAN WoL then reaches it over Tailscale SSH — the only device woken by broadcast rather than always-on.",
+      "Tailscale-only once awake. gpu-proxy on elitedesk wakes it via Wake-on-LAN, then reaches it over Tailscale SSH — the only device woken by broadcast rather than always-on.",
     items: [
       {
         slug: "ollama",
@@ -313,9 +313,8 @@ export const devices: Device[] = [
   {
     model: "MacBook Air (M2)",
     os: "macOS 26.6.2",
-    why: "Doesn't run any live homelab service — but losing it means losing the age private key and SSH access needed to manage/recover everything else.",
-    network:
-      "On the Tailscale mesh like every other device, plus its own direct SSH config/keys to every host. The only device with the personal OCI API key as well as the scoped backup one.",
+    why: "Doesn't run any live homelab service — but losing it means losing the age private key and the admin access needed to manage/recover everything else.",
+    network: "On the Tailscale mesh like every other device, plus the credentials used to administer the rest of the fleet.",
     items: [
       {
         slug: "claude-code-session",
@@ -338,7 +337,7 @@ export const production = {
       slug: "sacenpapier-hub",
       name: "sacenpapier.org (hub)",
       detail:
-        "The portfolio + postmortems site itself, a Next.js app. Pushes straight to main, which triggers a GitHub Actions build → Trivy scan → Docker Hub push → ArgoCD Image Updater write-back → cluster rollout, with no staging step in between.",
+        "The portfolio + postmortems site itself, a Next.js app. Pushes straight to main, which triggers a GitHub Actions build → Trivy scan → Docker Hub push → ArgoCD Image Updater write-back → cluster rollout. Deliberately no staging environment for a single-maintainer site this size — the Trivy gate catches known CVEs before a build ships, and ArgoCD's rollback is fast enough that the tradeoff is worth the simpler pipeline.",
       links: "https://sacenpapier.org",
     },
     {
@@ -381,7 +380,7 @@ export const integrations: Integration[] = [
     slug: "ssh",
     name: "SSH",
     detail:
-      "Key-based access between every host in the homelab — the Mac's own SSH config is effectively the map of who can reach whom. Used for live queries, deploys, and as the transport gpu-proxy uses to both wake and talk to the gaming PC.",
+      "Key-based access between hosts in the homelab, used for live queries, deploys, and as the transport gpu-proxy uses to both wake and talk to the gaming PC.",
     usedIn: [
       { href: "#svc-gpu-proxy", label: "gpu-proxy" },
       { href: "#svc-claude-code-session", label: "This Claude Code session" },

@@ -14,44 +14,33 @@ export type Skill = {
  * Kustomize -> GitOps) and project-name tags (x, BotWhy, PopRoom, Apercu)
  * aren't skills, so they're left out.
  *
- * This list is meant to grow — see the "Add a skill button?" step in the
- * sacenpapier-content skill, which checks new updates against it.
+ * Grouped into ~10 categories (per plan-oct-23.md §2) instead of one chip
+ * per tool, so the filter row reads as a skill list rather than a tag
+ * cloud. A few tags could reasonably sit in more than one bucket (Traefik:
+ * Kubernetes vs Networking; TLS: Security vs Networking) — these are
+ * judgment calls, rebalance freely.
  */
 export const skills: Skill[] = [
   { label: "Kubernetes", match: ["k3s", "Kubernetes"] },
   { label: "GitOps", match: ["GitOps", "ArgoCD", "FluxCD", "Kustomize"] },
-  { label: "Security", match: ["Security", "CVE", "Dependencies", "NetworkPolicy", "SSH", "RBAC", "Trivy"] },
-  { label: "Auth", match: ["Auth"] },
-  { label: "MySQL", match: ["MySQL", "shared-mysql"] },
-  { label: "Secrets Management", match: ["Doppler", "Secrets"] },
-  { label: "Observability", match: ["Observability", "Prometheus", "OpenTelemetry", "Tracing", "Monitoring"] },
+  { label: "CI/CD", match: ["CI/CD", "GitHub Actions", "Docker"] },
+  {
+    label: "Observability",
+    match: ["Observability", "Prometheus", "OpenTelemetry", "Tracing", "Monitoring", "Alertmanager", "Uptime Kuma", "Tempo", "Reliability"],
+  },
+  {
+    label: "Security",
+    match: ["Security", "CVE", "Dependencies", "NetworkPolicy", "SSH", "RBAC", "Trivy", "JWT", "OAuth", "Auth", "TLS", "Doppler", "Secrets"],
+  },
+  { label: "Networking", match: ["Networking", "OPNsense", "Traefik"] },
+  { label: "Storage", match: ["Longhorn", "TrueNAS"] },
   { label: "Infrastructure as Code", match: ["Terraform", "Ansible"] },
-  { label: "Canvas / Real-time", match: ["Canvas", "WebSockets", "Procedural"] },
-  { label: "Payments", match: ["Stripe", "Payments"] },
-  { label: "Local LLM", match: ["Local LLM", "Ollama", "Hermes Agent"] },
-  { label: "Python / FastAPI", match: ["FastAPI"] },
-  { label: "React", match: ["React"] },
-  { label: "Vite", match: ["Vite"] },
-  { label: "i18n / Localization", match: ["i18n"] },
-  { label: "CSS / Responsive Design", match: ["CSS", "Mobile"] },
-  { label: "Reliability Engineering", match: ["Reliability"] },
-  { label: "CI/CD", match: ["CI/CD"] },
-  { label: "TLS / Certificate Management", match: ["TLS"] },
-  { label: "Docker", match: ["Docker"] },
-  { label: "TypeScript", match: ["TypeScript"] },
-  { label: "JWT", match: ["JWT"] },
-  { label: "OAuth", match: ["OAuth"] },
-  { label: "OpenRouter", match: ["OpenRouter"] },
-  { label: "GitHub Actions", match: ["GitHub Actions"] },
-  { label: "Traefik", match: ["Traefik"] },
-  { label: "Longhorn", match: ["Longhorn"] },
-  { label: "TrueNAS", match: ["TrueNAS"] },
-  { label: "Networking", match: ["Networking"] },
-  { label: "OPNsense", match: ["OPNsense"] },
-  { label: "SQLAlchemy", match: ["SQLAlchemy"] },
-  { label: "SQLite", match: ["SQLite"] },
-  { label: "Alertmanager", match: ["Alertmanager"] },
-  { label: "Uptime Kuma", match: ["Uptime Kuma"] },
-  { label: "vLLM", match: ["vLLM"] },
-  { label: "Tempo", match: ["Tempo"] },
+  { label: "Databases", match: ["MySQL", "shared-mysql", "SQLAlchemy", "SQLite"] },
+  {
+    label: "App Development",
+    match: [
+      "React", "TypeScript", "Vite", "CSS", "Mobile", "i18n", "Canvas", "WebSockets", "Procedural",
+      "Payments", "Stripe", "Local LLM", "Ollama", "Hermes Agent", "FastAPI", "OpenRouter", "vLLM",
+    ],
+  },
 ];

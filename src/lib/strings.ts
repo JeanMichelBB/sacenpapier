@@ -37,6 +37,7 @@ export const strings = {
     backendStatLive: "Live",
     backendStatEndpoints: "API endpoints",
     backendStatCommits: "commits",
+    snapshotNote: "snapshot, not live — pulled from the repo by hand",
     aboutNav: "About",
     aboutTitle: "About",
     aboutText: [
@@ -100,6 +101,7 @@ export const strings = {
     backendStatLive: "En ligne",
     backendStatEndpoints: "points d'accès API",
     backendStatCommits: "commits",
+    snapshotNote: "instantané, pas en direct — relevé manuellement du dépôt",
     aboutNav: "À propos",
     aboutTitle: "À propos",
     aboutText: [
