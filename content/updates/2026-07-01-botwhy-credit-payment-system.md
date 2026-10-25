@@ -1,5 +1,5 @@
 ---
-title: BotWhy — Credit and Payment System
+title: BotWhy, Credit and Payment System
 date: 2026-07-01
 duration: ~3 days
 tags: [BotWhy, Stripe, Payments]
@@ -11,7 +11,7 @@ A full pay-as-you-go credit system for BotWhy: Stripe checkout and webhooks, a c
 
 ## Why
 
-BotWhy's AI calls cost real money per message via OpenRouter — a credit system was the only way to offer the app publicly without an open-ended cost exposure, while still giving new users enough free usage to actually try it.
+BotWhy's AI calls cost real money per message via OpenRouter, a credit system was the only way to offer the app publicly without an open-ended cost exposure, while still giving new users enough free usage to actually try it.
 
 ## How it's set up
 

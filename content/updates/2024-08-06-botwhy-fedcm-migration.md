@@ -1,5 +1,5 @@
 ---
-title: BotWhy — Migrating Google Auth to FedCM
+title: BotWhy, Migrating Google Auth to FedCM
 date: 2024-08-06
 duration: one day
 tags: [BotWhy, Auth, Migration]
@@ -11,7 +11,7 @@ Migrated BotWhy's Google sign-in from the old Google Identity Services flow to F
 
 ## Why
 
-Google deprecated the old identity API this migration replaced — not an optional upgrade, the old flow was on a path to stop working in supported browsers. A forced platform migration, not a feature choice.
+Google deprecated the old identity API this migration replaced, not an optional upgrade, the old flow was on a path to stop working in supported browsers. A forced platform migration, not a feature choice.
 
 ## How it's set up
 
@@ -19,4 +19,4 @@ FedCM shifts the sign-in prompt into a browser-native UI instead of a third-part
 
 ## What's next
 
-This landed early in BotWhy's life, well before the credit system, admin UI, and voice mode that came later — auth has been stable since.
+This landed early in BotWhy's life, well before the credit system, admin UI, and voice mode that came later, auth has been stable since.

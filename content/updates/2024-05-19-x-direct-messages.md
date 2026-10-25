@@ -1,5 +1,5 @@
 ---
-title: x — Direct Messages
+title: x, Direct Messages
 date: 2024-05-19
 duration: 5 days
 tags: [x, Messaging]
@@ -7,11 +7,11 @@ tags: [x, Messaging]
 
 ## What shipped
 
-Direct messages between users: a `Message` model and FastAPI router (send, list by user, delete), a Messages page with a threaded `MessageList`, and a compose flow — `ComposeMessageForm` wired to the existing user search so a conversation starts by searching for someone rather than needing an existing thread first.
+Direct messages between users: a `Message` model and FastAPI router (send, list by user, delete), a Messages page with a threaded `MessageList`, and a compose flow, `ComposeMessageForm` wired to the existing user search so a conversation starts by searching for someone rather than needing an existing thread first.
 
 ## Why
 
-Following and posting only get an X clone so far — messaging was the next core surface expected of a social app, and the one that turns a following graph into actual conversations between two users.
+Following and posting only get an X clone so far, messaging was the next core surface expected of a social app, and the one that turns a following graph into actual conversations between two users.
 
 ## How it's set up
 
@@ -19,4 +19,4 @@ Messages are stored per sender/recipient pair with a timestamp, queried per-user
 
 ## What's next
 
-The Messages page's right panel later got a layout fix — expanding to fill available space instead of a fixed 320px — once the rest of the app's panel-based layout patterns had matured.
+The Messages page's right panel later got a layout fix, expanding to fill available space instead of a fixed 320px, once the rest of the app's panel-based layout patterns had matured.

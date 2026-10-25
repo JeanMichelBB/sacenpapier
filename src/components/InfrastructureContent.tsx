@@ -6,7 +6,7 @@ import { infraApi, type InfraNode, type K3sData, type PodInfo } from "@/lib/infr
 
 const PHYSICAL_NODES = [
   { key: "tselitedesk", hw: "HP EliteDesk 800 G2", os: "Ubuntu", services: ["Media stack", "gpu-proxy", "k3s control plane"] },
-  { key: "tswindows11", hw: "Gaming PC — RTX 5070", os: "Windows 11", services: ["Ollama (RTX 5070)", "GPU inference"] },
+  { key: "tswindows11", hw: "Gaming PC (RTX 5070)", os: "Windows 11", services: ["Ollama (RTX 5070)", "GPU inference"] },
   { key: "tstruenas", hw: "Beelink ME Pro 2 · N95", os: "TrueNAS Scale", services: ["ZFS mirror RAID1", "4 TB storage", "NFS for k3s"] },
 ];
 

@@ -1,5 +1,5 @@
 ---
-title: PopRoom — Park Generation
+title: PopRoom, Park Generation
 date: 2026-07-11
 duration: 2 days
 tags: [PopRoom, Canvas, Procedural]
@@ -7,7 +7,7 @@ tags: [PopRoom, Canvas, Procedural]
 
 ## What shipped
 
-Procedural park generation for PopRoom's canvas — decor rendering, boulders, and wildlife (rabbits and birds) scattered across the play space, plus improved WebSocket error handling and a proper launch configuration for running frontend and backend together.
+Procedural park generation for PopRoom's canvas, decor rendering, boulders, and wildlife (rabbits and birds) scattered across the play space, plus improved WebSocket error handling and a proper launch configuration for running frontend and backend together.
 
 ## Why
 

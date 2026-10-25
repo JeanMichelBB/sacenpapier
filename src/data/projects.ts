@@ -21,8 +21,8 @@ export const projects: Project[] = [
     name: "x",
     slug: "x",
     description: {
-      en: "A Twitter-like social platform — tweets, retweets, likes, follows, direct messages and notifications.",
-      fr: "Une plateforme sociale inspirée de Twitter — tweets, retweets, mentions J'aime, abonnements, messages directs et notifications.",
+      en: "A Twitter-like social platform: tweets, retweets, likes, follows, direct messages and notifications.",
+      fr: "Une plateforme sociale inspirée de Twitter: tweets, retweets, mentions J'aime, abonnements, messages directs et notifications.",
     },
     url: "https://x.sacenpapier.org",
     repoUrl: "https://github.com/jeanmichelbb/x",
@@ -51,8 +51,8 @@ export const projects: Project[] = [
     name: "BotWhy",
     slug: "botwhy",
     description: {
-      en: "A sarcastic, intentionally unhelpful AI chatbot — pick from 8 models via OpenRouter, pay-as-you-go credits via Stripe, Google OAuth login.",
-      fr: "Un chatbot IA sarcastique et volontairement peu serviable — 8 modèles au choix via OpenRouter, crédits payants via Stripe, connexion Google OAuth.",
+      en: "A sarcastic, intentionally unhelpful AI chatbot: pick from 8 models via OpenRouter, pay-as-you-go credits via Stripe, Google OAuth login.",
+      fr: "Un chatbot IA sarcastique et volontairement peu serviable: 8 modèles au choix via OpenRouter, crédits payants via Stripe, connexion Google OAuth.",
     },
     url: "https://botwhy.sacenpapier.org",
     repoUrl: "https://github.com/JeanMichelBB/BotWhy",
@@ -66,7 +66,7 @@ export const projects: Project[] = [
     name: "Aperçu",
     slug: "apercu",
     description: {
-      en: "Full-stack event management platform — organizers publish events, speakers and blog posts under admin approval.",
+      en: "Full-stack event management platform: organizers publish events, speakers and blog posts under admin approval.",
       fr: "Plateforme full-stack de gestion d'événements. Les organisateurs publient événements, conférenciers et articles sous approbation admin, avec support EN/FR.",
     },
     url: "https://apercu.sacenpapier.org",

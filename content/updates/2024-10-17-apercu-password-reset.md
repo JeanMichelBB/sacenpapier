@@ -1,5 +1,5 @@
 ---
-title: Apercu — Password Reset and Email Flow
+title: Apercu, Password Reset and Email Flow
 date: 2024-10-17
 duration: a few days
 tags: [Apercu, Auth, Email]

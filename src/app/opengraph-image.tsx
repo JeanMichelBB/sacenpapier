@@ -32,7 +32,7 @@ export default async function Image() {
           </div>
         </div>
         <div style={{ fontSize: 32, color: "#a1a1aa", maxWidth: 900, lineHeight: 1.4 }}>
-          A collection of personal projects — web apps, infra, and experiments.
+          A collection of personal projects: web apps, infra, and experiments.
         </div>
         <div style={{ display: "flex", gap: 16, marginTop: 48 }}>
           {["x", "PopRoom", "BotWhy", "Aperçu"].map((name) => (

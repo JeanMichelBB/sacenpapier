@@ -389,7 +389,7 @@ export function HomelabDocsContent() {
       <section id="dev-integrations" ref={registerDevice} className="mb-12 scroll-mt-20 border-t border-zinc-200 pt-6 dark:border-zinc-800">
         <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Integrations</h3>
         <p className="mb-5 text-sm italic text-zinc-500 dark:text-zinc-500">
-          The connective layer — not a device, not an app, but what lets everything above actually talk to each other and the outside world.
+          The connective layer: not a device, not an app, but what lets everything above actually talk to each other and the outside world.
         </p>
         {integrations
           .filter((it) => !q || it.name.toLowerCase().includes(q))

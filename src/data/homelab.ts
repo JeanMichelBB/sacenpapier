@@ -31,7 +31,7 @@ export const devices: Device[] = [
   {
     model: "HP EliteDesk 800 G2 DM",
     os: "Ubuntu Server 24.04",
-    why: "Main server — does two separate jobs, split below.",
+    why: "Main server, does two separate jobs, split below.",
     network:
       "Tailscale-only for normal access. nginx-proxy here routes *.sacenpapier.org. One VPN tunnel handles outbound egress for a single downstream service; everything else stays mesh-only.",
     subgroups: [
@@ -42,7 +42,7 @@ export const devices: Device[] = [
             slug: "k3s-control-plane",
             name: "k3s control-plane",
             detail:
-              "Runs k3s's embedded sqlite datastore and schedules every workload onto the two OCI worker VMs over Tailscale. This is the piece most sensitive to Tailscale relay/connectivity issues — if the mesh degrades to a relay, scheduling and pod-to-pod traffic both suffer. A real incident once saw the sqlite datastore bloat to several GB from revision-history churn on high-frequency keys (leases, Longhorn CRDs), pegging elitedesk's CPU near 100% on essentially idle workload — fixed by keeping only the latest revision per key, cutting both the database size and CPU load roughly 15x. A handful of watchdogs now run automatically: one restarts Tailscale/k3s on relay issues, one clears stale Longhorn webhook registrations after a restart, one vacuums the sqlite datastore daily to keep it from bloating again. Day-to-day commands and Longhorn maintenance are documented separately rather than repeated here.",
+              "Runs k3s's embedded sqlite datastore and schedules every workload onto the two OCI worker VMs over Tailscale. This is the piece most sensitive to Tailscale relay/connectivity issues: if the mesh degrades to a relay, scheduling and pod-to-pod traffic both suffer. A real incident once saw the sqlite datastore bloat to several GB from revision-history churn on high-frequency keys (leases, Longhorn CRDs), pegging elitedesk's CPU near 100% on essentially idle workload. Fixed by keeping only the latest revision per key, cutting both the database size and CPU load roughly 15x. A handful of watchdogs now run automatically: one restarts Tailscale/k3s on relay issues, one clears stale Longhorn webhook registrations after a restart, one vacuums the sqlite datastore daily to keep it from bloating again. Day-to-day commands and Longhorn maintenance are documented separately rather than repeated here.",
           },
         ],
       },
@@ -53,25 +53,25 @@ export const devices: Device[] = [
             slug: "homepage",
             name: "Homepage",
             detail:
-              "The live dashboard — what you actually open from the Mac shortcut for a quick glance at everything. Services are Docker-label auto-discovered rather than hand-maintained in services.yaml, so a new container with the right labels shows up without an edit. Widgets poll live APIs (VPN status, the media stack, container management, uptime checks, LLM usage) directly, so what you see here reflects current state, not a cached snapshot.",
+              "The live dashboard, what you actually open from the Mac shortcut for a quick glance at everything. Services are Docker-label auto-discovered rather than hand-maintained in services.yaml, so a new container with the right labels shows up without an edit. Widgets poll live APIs (VPN status, the media stack, container management, uptime checks, LLM usage) directly, so what you see here reflects current state, not a cached snapshot.",
           },
           {
             slug: "gpu-proxy",
             name: "gpu-proxy",
             detail:
-              "The LLM gateway: wakes the gaming PC over LAN Wake-on-LAN, reaches it over Tailscale SSH once up, and proxies chat requests to Ollama. Gaming-guarded — it polls the Windows session's lock state over the same SSH connection and refuses inference while a game is actually running, rather than relying on the PC to self-report. Deliberately read-only with respect to Windows' own sleep policy — it used to disable standby/hibernate for the session and run a keep-awake loop, but that subsystem caused two real bugs, so it was removed entirely; Windows' own standby timer is now the sole authority on when it actually sleeps. Ollama itself runs as a real Windows service (via NSSM) rather than a Scheduled Task, after the Scheduled Task approach was confirmed to fail permanently on a cold reboot with nobody logged in interactively.",
+              "The LLM gateway: wakes the gaming PC over LAN Wake-on-LAN, reaches it over Tailscale SSH once up, and proxies chat requests to Ollama. Gaming-guarded: it polls the Windows session's lock state over the same SSH connection and refuses inference while a game is actually running, rather than relying on the PC to self-report. Deliberately read-only with respect to Windows' own sleep policy: it used to disable standby/hibernate for the session and run a keep-awake loop, but that subsystem caused two real bugs, so it was removed entirely; Windows' own standby timer is now the sole authority on when it actually sleeps. Ollama itself runs as a real Windows service (via NSSM) rather than a Scheduled Task, after the Scheduled Task approach was confirmed to fail permanently on a cold reboot with nobody logged in interactively.",
           },
           {
             slug: "hermes-bob",
             name: "Hermes / Bob",
             detail:
-              "The devops agent (Hermes v0.14.0, bot name Bob). Discord was disabled deliberately and indefinitely — that channel was shared with a gaming friend group, and the goal was fully off it, not just quieter — so Hermes now communicates only over Telegram, the same channel Alertmanager's alerts land in. Two more AI backends sit behind the local Ollama model as fallbacks: OpenAI (cheap auxiliary model) and OpenRouter (used if the local provider fails entirely) — switchable live via a chat command. SSH-backed terminal tool so it operates on the real host rather than an isolated sandbox, cron jobs for recurring checks, and persistent memory/session history. Own web dashboard for config, sessions, and memory.",
+              "The devops agent (Hermes v0.14.0, bot name Bob). Discord was disabled deliberately and indefinitely (that channel was shared with a gaming friend group, and the goal was fully off it, not just quieter), so Hermes now communicates only over Telegram, the same channel Alertmanager's alerts land in. Two more AI backends sit behind the local Ollama model as fallbacks: OpenAI (cheap auxiliary model) and OpenRouter (used if the local provider fails entirely), switchable live via a chat command. SSH-backed terminal tool so it operates on the real host rather than an isolated sandbox, cron jobs for recurring checks, and persistent memory/session history. Own web dashboard for config, sessions, and memory.",
           },
           {
             slug: "searxng",
             name: "SearXNG",
             detail:
-              "Self-hosted metasearch — aggregates results from other search engines without the tracking, used as a private search backend for other tools in the stack rather than a public-facing service.",
+              "Self-hosted metasearch: aggregates results from other search engines without the tracking, used as a private search backend for other tools in the stack rather than a public-facing service.",
           },
           {
             slug: "nginx-proxy",
@@ -83,31 +83,31 @@ export const devices: Device[] = [
             slug: "cloudflare-ddns",
             name: "Cloudflare DDNS",
             detail:
-              "A plain systemd timer (not a container) running every 10 minutes, updating Cloudflare's DNS record for the house's current public IP. This is the thing that makes *.sacenpapier.org keep working on a residential connection with no static IP. Easy to miss when auditing via docker ps alone — it's host-level automation with no container footprint at all.",
+              "A plain systemd timer (not a container) running every 10 minutes, updating Cloudflare's DNS record for the house's current public IP. This is the thing that makes *.sacenpapier.org keep working on a residential connection with no static IP. Easy to miss when auditing via docker ps alone: it's host-level automation with no container footprint at all.",
           },
           {
             slug: "minecraft-bedrock",
             name: "Minecraft Bedrock",
             detail:
-              "Currently paused — stopped for lack of available memory on elitedesk, not decommissioned. Also a systemd service, not Docker. Console/live-logs UI, plus a separate allowlist manager for adding/removing players. Has its own two systemd timers: one backs up the world on a schedule, the other checks for and applies server updates — both separate from this repo's own daily config backup. Provisioned via the repo's own Ansible playbook for standing up a fresh host.",
+              "Currently paused, stopped for lack of available memory on elitedesk, not decommissioned. Also a systemd service, not Docker. Console/live-logs UI, plus a separate allowlist manager for adding/removing players. Has its own two systemd timers: one backs up the world on a schedule, the other checks for and applies server updates, both separate from this repo's own daily config backup. Provisioned via the repo's own Ansible playbook for standing up a fresh host.",
           },
           {
             slug: "portainer-agent-elitedesk",
             name: "Portainer agent",
             detail:
-              "The agent side of Portainer's remote-management model — the actual Portainer UI runs on tspi and manages this host (and others) through this agent, rather than elitedesk running its own standalone instance.",
+              "The agent side of Portainer's remote-management model: the actual Portainer UI runs on tspi and manages this host (and others) through this agent, rather than elitedesk running its own standalone instance.",
           },
           {
             slug: "watchtower-elitedesk",
             name: "Watchtower",
             detail:
-              "Auto-updates container images on a schedule. Needed an explicit DOCKER_API_VERSION=1.45 env var at one point to stop a Docker API version mismatch error — worth checking first if it starts failing again.",
+              "Auto-updates container images on a schedule. Needed an explicit DOCKER_API_VERSION=1.45 env var at one point to stop a Docker API version mismatch error, worth checking first if it starts failing again.",
           },
           {
             slug: "glances-elitedesk",
             name: "Glances",
             detail:
-              "System stats exporter, feeds Homepage's CPU/resource widgets for this host. The 'version: 4' field matters in Homepage's widget config — without it the widget shows NaN% instead of real numbers.",
+              "System stats exporter, feeds Homepage's CPU/resource widgets for this host. The 'version: 4' field matters in Homepage's widget config, without it the widget shows NaN% instead of real numbers.",
           },
           {
             slug: "cadvisor",
@@ -131,7 +131,7 @@ export const devices: Device[] = [
             slug: "opnsense-metrics-relay",
             name: "opnsense-metrics-relay",
             detail:
-              "A socat relay (listens locally, forwards to OPNsense's own metrics port) that exists purely because OPNsense's node_exporter can't be scraped directly from tspi over the network topology in play — this container bridges that gap so OPNsense's metrics still reach Prometheus.",
+              "A socat relay (listens locally, forwards to OPNsense's own metrics port) that exists purely because OPNsense's node_exporter can't be scraped directly from tspi over the network topology in play. This container bridges that gap so OPNsense's metrics still reach Prometheus.",
           },
         ],
       },
@@ -142,13 +142,13 @@ export const devices: Device[] = [
     os: "TrueNAS SCALE",
     why: "Highest-impact loss: the single most irreplaceable device in the homelab.",
     network:
-      "LAN only, not on Tailscale — reachable only from inside the house network. elitedesk mounts it directly for media + backups.",
+      "LAN only, not on Tailscale, reachable only from inside the house network. elitedesk mounts it directly for media + backups.",
     items: [
       {
         slug: "truenas-backups",
         name: "Backups (k3s, elitedesk, Time Machine)",
         detail:
-          "ZFS-snapshotted daily — protects against accidental delete/corruption and ransomware-style mass-change, not disk failure (the mirror RAID1 pool already covers that separately). Added after the 2026-10-14 incident where Media/.env went missing with zero backup anywhere and had to be recovered from a single lucky one-off copy. Also the Time Machine target for the Mac.",
+          "ZFS-snapshotted daily, protects against accidental delete/corruption and ransomware-style mass-change, not disk failure (the mirror RAID1 pool already covers that separately). Added after the 2026-10-14 incident where Media/.env went missing with zero backup anywhere and had to be recovered from a single lucky one-off copy. Also the Time Machine target for the Mac.",
       },
     ],
   },
@@ -163,22 +163,22 @@ export const devices: Device[] = [
         slug: "opnsense-firewall",
         name: "Firewall + routing",
         detail:
-          "A transparent bridge firewall — every packet on the LAN passes through it, but it isn't acting as a traditional gateway IP for most devices. Its WebUI is reachable over Tailscale via `tailscale serve`, specifically because FreeBSD's Tailscale client is userspace-only and can't get its own mesh IP the normal way. A known upstream bug in its gateway API (opnsense-exporter's current_data_length parse error) is already filtered out of the alert rules so it can't falsely trip them; a weekly Hermes cron job watches for a real fix.",
+          "A transparent bridge firewall: every packet on the LAN passes through it, but it isn't acting as a traditional gateway IP for most devices. Its WebUI is reachable over Tailscale via `tailscale serve`, specifically because FreeBSD's Tailscale client is userspace-only and can't get its own mesh IP the normal way. A known upstream bug in its gateway API (opnsense-exporter's current_data_length parse error) is already filtered out of the alert rules so it can't falsely trip them; a weekly Hermes cron job watches for a real fix.",
       },
     ],
   },
   {
     model: "OCI (Oracle Cloud)",
     os: "2x VM.Standard.A1.Flex, Ubuntu 24.04",
-    why: "Not a single device — 2 worker VMs plus the Always Free Object Storage bucket, all part of the same Oracle Cloud account. The actual apps running on these VMs are documented separately under Production, not mixed in here.",
+    why: "Not a single device: 2 worker VMs plus the Always Free Object Storage bucket, all part of the same Oracle Cloud account. The actual apps running on these VMs are documented separately under Production, not mixed in here.",
     network:
-      "Tailscale-only, each worker on its own Tailscale IP. k3s spans elitedesk's control-plane and these two workers entirely over Tailscale — the one piece most sensitive to Tailscale relay/connectivity issues. Traefik ingress routes *.sacenpapier.org to the right pod once it reaches the cluster.",
+      "Tailscale-only, each worker on its own Tailscale IP. k3s spans elitedesk's control-plane and these two workers entirely over Tailscale, the one piece most sensitive to Tailscale relay/connectivity issues. Traefik ingress routes *.sacenpapier.org to the right pod once it reaches the cluster.",
     items: [
       {
         slug: "longhorn",
         name: "Longhorn",
         detail:
-          "Distributed block storage backing the cluster's PVCs, replicated across the control-plane and both worker nodes. Known gap: no off-cluster backup target is configured — it only has in-cluster replicas, so a cluster-wide event (not just one node) could still mean real data loss. Not yet resolved.",
+          "Distributed block storage backing the cluster's PVCs, replicated across the control-plane and both worker nodes. Known gap: no off-cluster backup target is configured, it only has in-cluster replicas, so a cluster-wide event (not just one node) could still mean real data loss. Not yet resolved.",
       },
       {
         slug: "mysql",
@@ -190,7 +190,7 @@ export const devices: Device[] = [
         slug: "oci-object-storage",
         name: "OCI Object Storage",
         detail:
-          "The offsite leg of the homelab's config backup strategy — age-encrypted before anything leaves a host, uploaded via a scoped IAM credential rather than the personal OCI API key, so a leaked server credential can't touch compute/k3s/anything else. Provisioned via its own Terraform project. Always Free tier: 20GB total.",
+          "The offsite leg of the homelab's config backup strategy: age-encrypted before anything leaves a host, uploaded via a scoped IAM credential rather than the personal OCI API key, so a leaked server credential can't touch compute/k3s/anything else. Provisioned via its own Terraform project. Always Free tier: 20GB total.",
       },
       {
         slug: "config-backups-bucket",
@@ -202,14 +202,14 @@ export const devices: Device[] = [
         slug: "oci-quota-check",
         name: "check_oci_backup_quota.sh",
         detail:
-          "A daily script (runs right after the sync, so it reflects current size) that fires an alert if the bucket crosses 80% of the 20GB free-tier limit — built directly in response to the 5.6GB near-miss, so the next one gets caught automatically instead of by luck.",
+          "A daily script (runs right after the sync, so it reflects current size) that fires an alert if the bucket crosses 80% of the 20GB free-tier limit, built directly in response to the 5.6GB near-miss, so the next one gets caught automatically instead of by luck.",
       },
     ],
   },
   {
     model: "Raspberry Pi 4 Model B",
     os: "Debian 13",
-    why: "Lower impact: if it dies, you lose visibility into problems — nothing else actually stops.",
+    why: "Lower impact: if it dies, you lose visibility into problems, nothing else actually stops.",
     network: "Tailscale only, no LAN fallback documented. Scrapes every other host's metrics over Tailscale.",
     items: [
       {
@@ -222,7 +222,7 @@ export const devices: Device[] = [
         slug: "alertmanager",
         name: "Alertmanager",
         detail:
-          "This is where the monitoring stack actually lives, so alert routing is centered here: fired alerts go out over Telegram via a plain authenticated webhook into Hermes/Bob's own webhook platform, registered deliver-only — it skips Bob's agent loop entirely, zero LLM calls per alert, just a direct template render straight to Telegram. group_by includes alertname/cluster/node plus disk/container/host specifically — grouping only by the first three once meant multiple alert instances with different per-instance text got bundled into one notification with no text common across the group. Fixed by grouping on the differentiating labels too.",
+          "This is where the monitoring stack actually lives, so alert routing is centered here: fired alerts go out over Telegram via a plain authenticated webhook into Hermes/Bob's own webhook platform, registered deliver-only: it skips Bob's agent loop entirely, zero LLM calls per alert, just a direct template render straight to Telegram. group_by includes alertname/cluster/node plus disk/container/host specifically. Grouping only by the first three once meant multiple alert instances with different per-instance text got bundled into one notification with no text common across the group. Fixed by grouping on the differentiating labels too.",
       },
       {
         slug: "grafana",
@@ -234,7 +234,7 @@ export const devices: Device[] = [
         slug: "loki-ruler",
         name: "Loki + ruler",
         detail:
-          "Log aggregation plus Loki's own local rule evaluation engine for log-based alerts. Loads every file in its rules directory as an independently-evaluated rule group — a real bug once came from leftover .bak-timestamp safety copies sitting inside that same directory, meaning 7 historical rule versions were evaluating simultaneously; backups now live outside that directory entirely.",
+          "Log aggregation plus Loki's own local rule evaluation engine for log-based alerts. Loads every file in its rules directory as an independently-evaluated rule group. A real bug once came from leftover .bak-timestamp safety copies sitting inside that same directory, meaning 7 historical rule versions were evaluating simultaneously; backups now live outside that directory entirely.",
       },
       {
         slug: "tempo",
@@ -245,13 +245,13 @@ export const devices: Device[] = [
         slug: "uptime-kuma",
         name: "Uptime Kuma",
         detail:
-          "Simple external up/down checks, independent of the Prometheus/Grafana stack. Its kuma.db (829MB — monitor definitions, Telegram notification config, and all heartbeat history in one file) is backed up via SQLite's online-backup API, same reasoning as Grafana's db.",
+          "Simple external up/down checks, independent of the Prometheus/Grafana stack. Its kuma.db (829MB, monitor definitions, Telegram notification config, and all heartbeat history in one file) is backed up via SQLite's online-backup API, same reasoning as Grafana's db.",
       },
       {
         slug: "portainer-tspi",
         name: "Portainer",
         detail:
-          "The actual Portainer UI (not just an agent) — manages this host plus elitedesk's containers through its agent there. A setup-timeout issue once required a plain restart and completing setup within 5 minutes.",
+          "The actual Portainer UI (not just an agent), manages this host plus elitedesk's containers through its agent there. A setup-timeout issue once required a plain restart and completing setup within 5 minutes.",
       },
       {
         slug: "watchtower-tspi",
@@ -267,13 +267,13 @@ export const devices: Device[] = [
         slug: "promtail-tspi",
         name: "Promtail",
         detail:
-          "Ships this host's own container logs into its local Loki, same role as elitedesk's Promtail but local — no network hop needed since Loki runs right here.",
+          "Ships this host's own container logs into its local Loki, same role as elitedesk's Promtail but local, no network hop needed since Loki runs right here.",
       },
       {
         slug: "blackbox-exporter",
         name: "blackbox-exporter",
         detail:
-          "Probes endpoints from the outside (HTTP/TCP/ICMP checks) rather than scraping an app's own metrics — used for things like confirming a service's /ping endpoint actually returns 200 without auth.",
+          "Probes endpoints from the outside (HTTP/TCP/ICMP checks) rather than scraping an app's own metrics, used for things like confirming a service's /ping endpoint actually returns 200 without auth.",
       },
       {
         slug: "graphite-exporter",
@@ -285,7 +285,7 @@ export const devices: Device[] = [
         slug: "opnsense-exporter",
         name: "opnsense-exporter",
         detail:
-          "Scrapes OPNsense's own stats (via the metrics relay) into Prometheus. Has a known upstream bug where its gateway API returns inconsistent types for dynamic gateways — already filtered out of the alert rules rather than tripping them.",
+          "Scrapes OPNsense's own stats (via the metrics relay) into Prometheus. Has a known upstream bug where its gateway API returns inconsistent types for dynamic gateways, already filtered out of the alert rules rather than tripping them.",
       },
     ],
   },
@@ -294,26 +294,26 @@ export const devices: Device[] = [
     os: "Windows 11",
     why: "Lowest impact: usually asleep already, only affects local LLM + game streaming.",
     network:
-      "Tailscale-only once awake. gpu-proxy on elitedesk wakes it via Wake-on-LAN, then reaches it over Tailscale SSH — the only device woken by broadcast rather than always-on.",
+      "Tailscale-only once awake. gpu-proxy on elitedesk wakes it via Wake-on-LAN, then reaches it over Tailscale SSH, the only device woken by broadcast rather than always-on.",
     items: [
       {
         slug: "ollama",
         name: "Ollama (gemma4)",
         detail:
-          "The local model, woken on demand via gpu-proxy rather than running 24/7. Gaming-guarded by a simple SSH lock-state poll (is the Windows session locked?) rather than process-detection — this machine is used almost exclusively for gaming, so 'unlocked' and 'actively gaming' are treated as the same signal.",
+          "The local model, woken on demand via gpu-proxy rather than running 24/7. Gaming-guarded by a simple SSH lock-state poll (is the Windows session locked?) rather than process-detection. This machine is used almost exclusively for gaming, so 'unlocked' and 'actively gaming' are treated as the same signal.",
       },
       {
         slug: "apollo",
         name: "Apollo",
         detail:
-          "Game streaming host, a Sunshine fork swapped in during a Windows update in October 2026 — binaries are still named sunshine.exe/sunshinesvc.exe, which is expected and not a leftover-cleanup issue.",
+          "Game streaming host, a Sunshine fork swapped in during a Windows update in October 2026, binaries are still named sunshine.exe/sunshinesvc.exe, which is expected and not a leftover-cleanup issue.",
       },
     ],
   },
   {
     model: "MacBook Air (M2)",
     os: "macOS 26.6.2",
-    why: "Doesn't run any live homelab service — but losing it means losing the age private key and the admin access needed to manage/recover everything else.",
+    why: "Doesn't run any live homelab service, but losing it means losing the age private key and the admin access needed to manage/recover everything else.",
     network: "On the Tailscale mesh like every other device, plus the credentials used to administer the rest of the fleet.",
     items: [
       {
@@ -324,20 +324,20 @@ export const devices: Device[] = [
       {
         slug: "age-private-key",
         name: "age private key",
-        detail: "Decrypts the encrypted offsite backups. Lives only here — the public key is safe to distribute to servers.",
+        detail: "Decrypts the encrypted offsite backups. Lives only here. The public key is safe to distribute to servers.",
       },
     ],
   },
 ];
 
 export const production = {
-  why: "What's actually deployed and publicly reachable, kept separate from the Homelab devices above for clarity — this is the apps running on top of the OCI VMs, not the infrastructure itself.",
+  why: "What's actually deployed and publicly reachable, kept separate from the Homelab devices above for clarity. This is the apps running on top of the OCI VMs, not the infrastructure itself.",
   items: [
     {
       slug: "sacenpapier-hub",
       name: "sacenpapier.org (hub)",
       detail:
-        "The portfolio + postmortems site itself, a Next.js app. Pushes straight to main, which triggers a GitHub Actions build → Trivy scan → Docker Hub push → ArgoCD Image Updater write-back → cluster rollout. Deliberately no staging environment for a single-maintainer site this size — the Trivy gate catches known CVEs before a build ships, and ArgoCD's rollback is fast enough that the tradeoff is worth the simpler pipeline.",
+        "The portfolio + postmortems site itself, a Next.js app. Pushes straight to main, which triggers a GitHub Actions build → Trivy scan → Docker Hub push → ArgoCD Image Updater write-back → cluster rollout. Deliberately no staging environment for a single-maintainer site this size. The Trivy gate catches known CVEs before a build ships, and ArgoCD's rollback is fast enough that the tradeoff is worth the simpler pipeline.",
       links: "https://sacenpapier.org",
     },
     {
@@ -364,13 +364,13 @@ export const production = {
       slug: "homelab-dashboard",
       name: "homelab-dashboard",
       detail:
-        "A backend + frontend + redis deployment whose backend feeds hub's live homelab data (k3s nodes/pods) directly. Its own subdomain is effectively dead now — traffic falls through to hub's wildcard ingress instead. Not wasted though: hub calls this backend directly (cluster-internal).",
+        "A backend + frontend + redis deployment whose backend feeds hub's live homelab data (k3s nodes/pods) directly. Its own subdomain is effectively dead now. Traffic falls through to hub's wildcard ingress instead. Not wasted though: hub calls this backend directly (cluster-internal).",
     },
     {
       slug: "argocd",
       name: "ArgoCD",
       detail:
-        "GitOps controller — watches each app's repo/image tag and rolls out updates automatically. Server, repo-server, applicationset controller, image-updater, dex (auth), redis, and notifications all run as separate pods in their own namespace.",
+        "GitOps controller: watches each app's repo/image tag and rolls out updates automatically. Server, repo-server, applicationset controller, image-updater, dex (auth), redis, and notifications all run as separate pods in their own namespace.",
     },
   ] as ServiceItem[],
 };
@@ -391,7 +391,7 @@ export const integrations: Integration[] = [
     slug: "tailscale",
     name: "Tailscale",
     detail:
-      "The mesh network every host communicates over — no service assumes plain LAN reachability except gpu-proxy's Wake-on-LAN broadcast. Also has its own control-plane service coordinating the mesh, separate from the devices themselves.",
+      "The mesh network every host communicates over. No service assumes plain LAN reachability except gpu-proxy's Wake-on-LAN broadcast. Also has its own control-plane service coordinating the mesh, separate from the devices themselves.",
     usedIn: [
       { href: "#dev-3", label: "OCI (Oracle Cloud)" },
       { href: "#dev-4", label: "Raspberry Pi" },
@@ -412,7 +412,7 @@ export const integrations: Integration[] = [
   {
     slug: "docker-hub",
     name: "Docker Hub",
-    detail: "Image registry — GitHub Actions pushes built images here, and both Watchtower and ArgoCD's Image Updater pull from here to roll out updates.",
+    detail: "Image registry: GitHub Actions pushes built images here, and both Watchtower and ArgoCD's Image Updater pull from here to roll out updates.",
     usedIn: [
       { href: "#svc-sacenpapier-hub", label: "sacenpapier.org (hub)" },
       { href: "#svc-argocd", label: "ArgoCD" },
@@ -430,7 +430,7 @@ export const integrations: Integration[] = [
   {
     slug: "doppler",
     name: "Doppler",
-    detail: "Secrets management for the k3s portfolio apps only — deliberately kept out of the home Docker stack's critical path so the house doesn't depend on an external SaaS just to start up.",
+    detail: "Secrets management for the k3s portfolio apps only, deliberately kept out of the home Docker stack's critical path so the house doesn't depend on an external SaaS just to start up.",
     usedIn: [
       { href: "#svc-x-app", label: "x" },
       { href: "#svc-poproom", label: "PopRoom" },
@@ -457,7 +457,7 @@ export const integrations: Integration[] = [
     slug: "reverse-proxy",
     name: "Reverse proxy + Let's Encrypt",
     detail:
-      "The reverse proxy (nginx-proxy / nginx-proxy-manager — treated as one general entry rather than claiming specifics on internals not fully confirmed) routes *.sacenpapier.org subdomains to the right local service. TLS certs come from Let's Encrypt via certbot, confirmed running on its own systemd timer for automatic renewal.",
+      "The reverse proxy (nginx-proxy / nginx-proxy-manager, treated as one general entry rather than claiming specifics on internals not fully confirmed) routes *.sacenpapier.org subdomains to the right local service. TLS certs come from Let's Encrypt via certbot, confirmed running on its own systemd timer for automatic renewal.",
     usedIn: [{ href: "#svc-nginx-proxy", label: "nginx-proxy" }],
   },
   {
@@ -478,13 +478,13 @@ export const integrations: Integration[] = [
   {
     slug: "terraform",
     name: "Terraform",
-    detail: "Infrastructure-as-code for Oracle Cloud — two separate projects: the original k3s/OCI compute, and a dedicated one for the Object Storage backup bucket with its own scoped IAM credential.",
+    detail: "Infrastructure-as-code for Oracle Cloud, in two separate projects: the original k3s/OCI compute, and a dedicated one for the Object Storage backup bucket with its own scoped IAM credential.",
     usedIn: [{ href: "#svc-oci-object-storage", label: "OCI Object Storage" }],
   },
   {
     slug: "provisioning",
     name: "Provisioning (Ansible + cloud-init)",
-    detail: "How a fresh host gets set up: an Ansible playbook provisions a Minecraft Bedrock server on a new box, and cloud-init user-data automates fresh Ubuntu VM provisioning. Different tools, same job — kept as one section rather than fragmenting it.",
+    detail: "How a fresh host gets set up: an Ansible playbook provisions a Minecraft Bedrock server on a new box, and cloud-init user-data automates fresh Ubuntu VM provisioning. Different tools, same job, kept as one section rather than fragmenting it.",
     usedIn: [{ href: "#svc-minecraft-bedrock", label: "Minecraft Bedrock" }],
   },
 ];

@@ -1,5 +1,5 @@
 ---
-title: BotWhy — Voice Mode
+title: BotWhy, Voice Mode
 date: 2026-07-06
 duration: one day
 tags: [BotWhy, Voice, Accessibility]
@@ -11,11 +11,11 @@ Voice input and voice replies for BotWhy's chat: a `useSpeechRecognition` hook f
 
 ## Why
 
-A chat app is a natural fit for voice — both as an accessibility path and as a genuinely different way to use the product on mobile.
+A chat app is a natural fit for voice, both as an accessibility path and as a genuinely different way to use the product on mobile.
 
 ## How it's set up
 
-Built on a dedicated `worktree-voice-mode` branch with its own design spec, merged as one unit. The auto-speak-every-reply approach shipped first and was replaced within the same day by a per-message button — auto-speaking every response turned out to be the wrong default, worth reversing quickly once it didn't feel right in practice.
+Built on a dedicated `worktree-voice-mode` branch with its own design spec, merged as one unit. The auto-speak-every-reply approach shipped first and was replaced within the same day by a per-message button, auto-speaking every response turned out to be the wrong default, worth reversing quickly once it didn't feel right in practice.
 
 ## What's next
 

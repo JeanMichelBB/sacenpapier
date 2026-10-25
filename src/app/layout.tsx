@@ -13,8 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const description =
-  "DevOps / Platform Engineer — a k3s homelab I built and operate, running four live products, documented in public when it breaks.";
+const description = "A collection of personal projects: web apps, infra, and experiments.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sacenpapier.org"),

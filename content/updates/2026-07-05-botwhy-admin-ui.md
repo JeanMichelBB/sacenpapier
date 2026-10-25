@@ -1,5 +1,5 @@
 ---
-title: BotWhy — Admin UI
+title: BotWhy, Admin UI
 date: 2026-07-05
 duration: 2 days
 tags: [BotWhy, Admin, Moderation]
@@ -7,11 +7,11 @@ tags: [BotWhy, Admin, Moderation]
 
 ## What shipped
 
-A full admin panel: user list and detail views, role management with a self-demotion guard, soft-delete and reactivate for accounts, a credit adjustment endpoint with an audit trail, and a transaction ledger view — plus the admin frontend routes and pages to use all of it.
+A full admin panel: user list and detail views, role management with a self-demotion guard, soft-delete and reactivate for accounts, a credit adjustment endpoint with an audit trail, and a transaction ledger view, plus the admin frontend routes and pages to use all of it.
 
 ## Why
 
-Running a public app with real payments and user accounts needs an operator surface — looking up a user, adjusting credits after a support issue, deactivating an account — that doesn't require direct database access for routine tasks.
+Running a public app with real payments and user accounts needs an operator surface, looking up a user, adjusting credits after a support issue, deactivating an account, that doesn't require direct database access for routine tasks.
 
 ## How it's set up
 

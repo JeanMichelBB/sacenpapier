@@ -21,15 +21,8 @@ type Props =
   | (BaseProps & { variant: "sub"; title?: string; titleBadge?: boolean; backBehavior?: "home" | "history" });
 
 function HeaderActions({ lang, onChangeLang }: BaseProps) {
-  const t = strings[lang];
   return (
     <div className="flex items-center gap-2 sm:shrink-0">
-      <a
-        href="mailto:jeanmichelbberube@gmail.com"
-        className="hidden items-center rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 sm:flex dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
-      >
-        {t.contactLabel}
-      </a>
       <GithubLink />
       <LinkedinLink />
       <EmailLink />
@@ -77,7 +70,8 @@ export function SiteHeader(props: Props) {
   return (
     <header className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="mb-1 flex items-center gap-3 text-3xl font-bold tracking-tight">
+        <h1 className="mb-2 flex items-center gap-3 text-3xl font-bold tracking-tight">
+          sacenpapier.org
           <button
             onClick={() => setCrushed(true)}
             aria-label="sacenpapier easter egg"
@@ -91,11 +85,8 @@ export function SiteHeader(props: Props) {
               className="rounded-md"
             />
           </button>
-          {t.name}
         </h1>
-        <p className="mb-2 text-sm font-semibold text-[#FF8225]">{t.role}</p>
-        <p className="max-w-md text-sm text-zinc-600 dark:text-zinc-400">{t.tagline}</p>
-        <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-600">sacenpapier.org</p>
+        <p className="max-w-md text-zinc-600 dark:text-zinc-400">{t.tagline}</p>
       </div>
       <HeaderActions lang={props.lang} onChangeLang={props.onChangeLang} />
     </header>

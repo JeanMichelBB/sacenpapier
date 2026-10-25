@@ -1,5 +1,5 @@
 ---
-title: BotWhy — The Mobile Viewport Fight
+title: BotWhy, The Mobile Viewport Fight
 date: 2026-07-03
 duration: 2 days, multiple reverts
 tags: [BotWhy, Mobile, CSS]
@@ -11,7 +11,7 @@ Eventually landed: a stable mobile layout where the chat input stays anchored at
 
 ## Why
 
-Mobile keyboards resize the visual viewport in ways that are notoriously inconsistent across browsers — a layout that looks correct on desktop can end up with the input bar hidden behind the keyboard, or the page double-shrinking, on a phone.
+Mobile keyboards resize the visual viewport in ways that are notoriously inconsistent across browsers, a layout that looks correct on desktop can end up with the input bar hidden behind the keyboard, or the page double-shrinking, on a phone.
 
 ## How it's set up
 
@@ -19,4 +19,4 @@ Went through two full revert cycles before landing: `fix: shrink layout when mob
 
 ## What's next
 
-This kind of fight — try an approach, ship it, discover it's wrong on a different device, revert, try again — doesn't show up in a changelog as cleanly as a feature does, but it's real engineering time and worth naming honestly rather than smoothing over.
+This kind of fight, try an approach, ship it, discover it's wrong on a different device, revert, try again, doesn't show up in a changelog as cleanly as a feature does, but it's real engineering time and worth naming honestly rather than smoothing over.
