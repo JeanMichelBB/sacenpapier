@@ -1,9 +1,7 @@
 import { Hub } from "@/components/Hub";
-import { getAllPostmortems } from "@/lib/postmortems";
-import { getAllUpdates } from "@/lib/updates";
+import { getAllWriting } from "@/lib/getWriting";
 
 export default function Page() {
-  const postmortems = getAllPostmortems();
-  const updates = getAllUpdates();
-  return <Hub postmortems={postmortems} updates={updates} />;
+  const writing = getAllWriting();
+  return <Hub writing={writing} />;
 }

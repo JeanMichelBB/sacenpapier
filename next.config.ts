@@ -20,10 +20,15 @@ const nextConfig: NextConfig = {
       { source: "/", ...noLongCache },
       { source: "/about", ...noLongCache },
       { source: "/infrastructure", ...noLongCache },
-      { source: "/postmortems", ...noLongCache },
+      { source: "/documentation", ...noLongCache },
       { source: "/postmortems/:slug", ...noLongCache },
-      { source: "/updates", ...noLongCache },
       { source: "/updates/:slug", ...noLongCache },
+    ];
+  },
+  async redirects() {
+    return [
+      { source: "/postmortems", destination: "/?tab=writing", permanent: false },
+      { source: "/updates", destination: "/?tab=writing", permanent: false },
     ];
   },
 };

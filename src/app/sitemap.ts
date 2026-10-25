@@ -17,8 +17,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: base, changeFrequency: "weekly" as const },
-    { url: `${base}/postmortems`, changeFrequency: "weekly" as const },
-    { url: `${base}/updates`, changeFrequency: "weekly" as const },
+    { url: `${base}/about`, changeFrequency: "monthly" as const },
+    { url: `${base}/infrastructure`, changeFrequency: "daily" as const },
+    { url: `${base}/documentation`, changeFrequency: "monthly" as const },
     ...postmortemEntries,
     ...updateEntries,
   ];

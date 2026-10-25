@@ -4,18 +4,17 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { projects } from "@/data/projects";
-import { Postmortem } from "@/lib/postmortems";
-import { Update } from "@/lib/updates";
 import { ProjectCard } from "@/components/ProjectCard";
 import { ProjectPreview } from "@/components/ProjectPreview";
 import { AboutContent } from "@/components/AboutContent";
 import { InfrastructureContent } from "@/components/InfrastructureContent";
 import { HomelabDocsContent } from "@/components/HomelabDocsContent";
-import { PostCard } from "@/components/PostCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { PodBadge } from "@/components/PodBadge";
+import { PostCard } from "@/components/PostCard";
 import { strings } from "@/lib/strings";
 import { useLang } from "@/lib/useLang";
+import { basePathFor, type WritingEntry, type PostKind } from "@/lib/writing";
 import { skills as skillList } from "@/data/skills";
 
 function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
@@ -33,14 +32,14 @@ function NotFoundBanner({ onLoad }: { onLoad: (subdomain: string) => void }) {
   return null;
 }
 
-export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updates: Update[] }) {
+export function Hub({ writing }: { writing: WritingEntry[] }) {
   const [notFound, setNotFound] = useState<string | null>(null);
-  const [docsPage, setDocsPage] = useState(0);
-  const [docSkillFilter, setDocSkillFilter] = useState<string | null>(null);
+  const [writingPage, setWritingPage] = useState(0);
+  const [writingType, setWritingType] = useState<PostKind | "all">("all");
+  const [writingSkill, setWritingSkill] = useState<string | null>(null);
   const [skillFilterOpen, setSkillFilterOpen] = useState(false);
-  const [docSubView, setDocSubView] = useState<"all" | "postmortems" | "documentation">("all");
   const { lang, changeLang } = useLang();
-  const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure" | "docs" | "homelabDocs">("projects");
+  const [activeView, setActiveView] = useState<"projects" | "about" | "infrastructure" | "homelabDocs" | "writing">("projects");
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
   const [backendPing, setBackendPing] = useState<{ name: string; ms: number | null; ok: boolean }[] | null>(null);
   const [pingTick, setPingTick] = useState(0);
@@ -60,15 +59,9 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tab = params.get("tab");
-    if (tab === "infrastructure" || tab === "about" || tab === "docs" || tab === "homelabDocs") {
+    if (tab === "infrastructure" || tab === "about" || tab === "homelabDocs" || tab === "writing") {
       setActiveView(tab);
     }
-    const sub = params.get("sub");
-    if (sub === "postmortems" || sub === "documentation" || sub === "all") {
-      setDocSubView(sub);
-    }
-    const dp = params.get("dp");
-    if (dp) setDocsPage(Math.max(0, parseInt(dp, 10) - 1));
     didInit.current = true;
 
     const savedScroll = sessionStorage.getItem("hub-scroll");
@@ -116,11 +109,9 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
     if (!didInit.current) return;
     const params = new URLSearchParams();
     if (activeView !== "projects") params.set("tab", activeView);
-    if (activeView === "docs" && docSubView !== "all") params.set("sub", docSubView);
-    if (docsPage > 0) params.set("dp", String(docsPage + 1));
     const qs = params.toString();
     window.history.replaceState(null, "", qs ? `/?${qs}` : "/");
-  }, [activeView, docSubView, docsPage]);
+  }, [activeView]);
 
   useEffect(() => {
     let cancelled = false;
@@ -154,25 +145,22 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
 
   const selectedProject = projects.find((p) => p.slug === selectedSlug) ?? projects[0];
 
-  const activeDocSkill = docSkillFilter ? skillList.find((s) => s.label === docSkillFilter) : undefined;
-  const allDocs: { post: Postmortem | Update; basePath: "/postmortems" | "/updates" }[] = [
-    ...postmortems.map((post) => ({ post, basePath: "/postmortems" as const })),
-    ...updates.map((post) => ({ post, basePath: "/updates" as const })),
-  ].sort((a, b) => (a.post.date < b.post.date ? 1 : -1));
-  const subFilteredDocs =
-    docSubView === "postmortems"
-      ? allDocs.filter((d) => d.basePath === "/postmortems")
-      : docSubView === "documentation"
-        ? allDocs.filter((d) => d.basePath === "/updates")
-        : allDocs;
-  const filteredDocs = activeDocSkill
-    ? subFilteredDocs.filter((d) => d.post.tags.some((tag) => activeDocSkill.match.some((m) => m.toLowerCase() === tag.toLowerCase())))
-    : subFilteredDocs;
-  const DOCS_PER_PAGE = 6;
-  const docsPageCount = Math.max(1, Math.ceil(filteredDocs.length / DOCS_PER_PAGE));
-  const pagedDocs = filteredDocs.slice(docsPage * DOCS_PER_PAGE, (docsPage + 1) * DOCS_PER_PAGE);
+  const activeWritingSkill = writingSkill ? skillList.find((s) => s.label === writingSkill) : undefined;
+  const writingByType = writingType === "all" ? writing : writing.filter((e) => e.kind === writingType);
+  const filteredWriting = activeWritingSkill
+    ? writingByType.filter((e) => e.post.tags.some((tag) => activeWritingSkill.match.some((m) => m.toLowerCase() === tag.toLowerCase())))
+    : writingByType;
+  const WRITING_PER_PAGE = 10;
+  const writingPageCount = Math.max(1, Math.ceil(filteredWriting.length / WRITING_PER_PAGE));
+  const pagedWriting = filteredWriting.slice(writingPage * WRITING_PER_PAGE, (writingPage + 1) * WRITING_PER_PAGE);
+  const chipClass = (active: boolean) =>
+    `rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+      active
+        ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
+        : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+    }`;
 
-  const docsSection = (
+  const writingSection = (
     <section>
       <div className="mb-6 flex items-center justify-between">
         <div className="flex flex-wrap gap-2">
@@ -180,30 +168,26 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             [
               ["all", t.all],
               ["postmortems", t.postmortems],
-              ["documentation", t.updates],
+              ["updates", t.updates],
             ] as const
           ).map(([value, label]) => (
             <button
               key={value}
               onClick={() => {
-                setDocSubView(value);
-                setDocsPage(0);
+                setWritingType(value);
+                setWritingPage(0);
               }}
-              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                docSubView === value
-                  ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
-                  : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-              }`}
+              className={chipClass(writingType === value)}
             >
               {label}
             </button>
           ))}
         </div>
-        {docsPageCount > 1 && (
+        {writingPageCount > 1 && (
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setDocsPage((p) => Math.max(0, p - 1))}
-              disabled={docsPage === 0}
+              onClick={() => setWritingPage((p) => Math.max(0, p - 1))}
+              disabled={writingPage === 0}
               aria-label="Previous page"
               className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             >
@@ -212,11 +196,11 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
               </svg>
             </button>
             <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600 tabular-nums">
-              {docsPage + 1} / {docsPageCount}
+              {writingPage + 1} / {writingPageCount}
             </span>
             <button
-              onClick={() => setDocsPage((p) => Math.min(docsPageCount - 1, p + 1))}
-              disabled={docsPage >= docsPageCount - 1}
+              onClick={() => setWritingPage((p) => Math.min(writingPageCount - 1, p + 1))}
+              disabled={writingPage >= writingPageCount - 1}
               aria-label="Next page"
               className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             >
@@ -241,15 +225,15 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           </svg>
           {t.filterLabel}
         </button>
-        {docSkillFilter && !skillFilterOpen && (
+        {writingSkill && !skillFilterOpen && (
           <button
             onClick={() => {
-              setDocSkillFilter(null);
-              setDocsPage(0);
+              setWritingSkill(null);
+              setWritingPage(0);
             }}
             className="inline-flex items-center gap-1 rounded-full border border-[#FF8225] bg-[#FF8225]/10 px-2.5 py-0.5 text-[11px] font-medium text-[#FF8225]"
           >
-            {docSkillFilter}
+            {writingSkill}
             <span aria-hidden>×</span>
           </button>
         )}
@@ -258,14 +242,10 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         <div className="mb-4 flex flex-wrap gap-1.5">
           <button
             onClick={() => {
-              setDocSkillFilter(null);
-              setDocsPage(0);
+              setWritingSkill(null);
+              setWritingPage(0);
             }}
-            className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
-              !docSkillFilter
-                ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
-                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-            }`}
+            className={chipClass(!writingSkill).replace("py-1", "py-0.5 text-[11px]")}
           >
             {t.allSkills}
           </button>
@@ -273,14 +253,10 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             <button
               key={skill.label}
               onClick={() => {
-                setDocSkillFilter(docSkillFilter === skill.label ? null : skill.label);
-                setDocsPage(0);
+                setWritingSkill(writingSkill === skill.label ? null : skill.label);
+                setWritingPage(0);
               }}
-              className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
-                docSkillFilter === skill.label
-                  ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
-                  : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-              }`}
+              className={chipClass(writingSkill === skill.label).replace("py-1", "py-0.5 text-[11px]")}
             >
               {skill.label}
             </button>
@@ -288,45 +264,14 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         </div>
       )}
       <div className="flex flex-col gap-3">
-        {pagedDocs.length > 0 ? (
-          pagedDocs.map((d) => <PostCard key={`${d.basePath}-${d.post.slug}`} post={d.post} basePath={d.basePath} />)
+        {pagedWriting.length > 0 ? (
+          pagedWriting.map((entry) => (
+            <PostCard key={`${entry.kind}-${entry.post.slug}`} post={entry.post} basePath={basePathFor(entry.kind)} />
+          ))
         ) : (
           <p className="text-xs text-zinc-500 dark:text-zinc-500">{t.noSkillMatches}</p>
         )}
       </div>
-      {docsPageCount > 1 && (
-        <div className="mt-6 flex items-center justify-center gap-3">
-          <button
-            onClick={() => {
-              setDocsPage((p) => Math.max(0, p - 1));
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            disabled={docsPage === 0}
-            aria-label="Previous page"
-            className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600 tabular-nums">
-            {docsPage + 1} / {docsPageCount}
-          </span>
-          <button
-            onClick={() => {
-              setDocsPage((p) => Math.min(docsPageCount - 1, p + 1));
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            disabled={docsPage >= docsPageCount - 1}
-            aria-label="Next page"
-            className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
-        </div>
-      )}
     </section>
   );
 
@@ -366,7 +311,7 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
               </span>
               <span className="text-xs text-zinc-400 dark:text-zinc-600">
-                {selectedProject.name} — {t.backendStatLatency}
+                {selectedProject.name}, {t.backendStatLatency}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -411,27 +356,23 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
         );
       })()}
 
-      {allDocs[0] && (
+      {writing[0] && (
         <div className="mt-8">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.writingNav}</h3>
           <Link
-            href={`${allDocs[0].basePath}/${allDocs[0].post.slug}`}
+            href={`${basePathFor(writing[0].kind)}/${writing[0].post.slug}`}
             className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
           >
-            <div className="text-sm font-medium text-zinc-900 dark:text-white">{allDocs[0].post.title}</div>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{allDocs[0].post.summary}</p>
+            <div className="text-sm font-medium text-zinc-900 dark:text-white">{writing[0].post.title}</div>
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{writing[0].post.summary}</p>
           </Link>
           <div className="mt-2">
-            <Link
-              href="/postmortems"
-              onClick={(e) => {
-                e.preventDefault();
-                setActiveView("docs");
-              }}
+            <button
+              onClick={() => setActiveView("writing")}
               className="block w-full rounded-lg border border-zinc-200 py-2 text-center text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             >
               {t.nextPage}
-            </Link>
+            </button>
           </div>
         </div>
       )}
@@ -495,20 +436,16 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
           >
             {t.homelabDocsNav}
           </Link>
-          <Link
-            href="/postmortems"
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveView(activeView === "docs" ? "projects" : "docs");
-            }}
+          <button
+            onClick={() => setActiveView(activeView === "writing" ? "projects" : "writing")}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-              activeView === "docs"
+              activeView === "writing"
                 ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             }`}
           >
             {t.writingNav}
-          </Link>
+          </button>
           <Link
             href="/about"
             onClick={(e) => {
@@ -532,8 +469,8 @@ export function Hub({ postmortems, updates }: { postmortems: Postmortem[]; updat
             <InfrastructureContent lang={lang} />
           ) : activeView === "homelabDocs" ? (
             <HomelabDocsContent />
-          ) : activeView === "docs" ? (
-            docsSection
+          ) : activeView === "writing" ? (
+            writingSection
           ) : (
             projectsSection
           )}
