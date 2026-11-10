@@ -154,7 +154,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
   const writingPageCount = Math.max(1, Math.ceil(filteredWriting.length / WRITING_PER_PAGE));
   const pagedWriting = filteredWriting.slice(writingPage * WRITING_PER_PAGE, (writingPage + 1) * WRITING_PER_PAGE);
   const chipClass = (active: boolean) =>
-    `rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+    `rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
       active
         ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
         : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
@@ -189,7 +189,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
               onClick={() => setWritingPage((p) => Math.max(0, p - 1))}
               disabled={writingPage === 0}
               aria-label="Previous page"
-              className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+              className="rounded-lg border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 18l-6-6 6-6" />
@@ -202,7 +202,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
               onClick={() => setWritingPage((p) => Math.min(writingPageCount - 1, p + 1))}
               disabled={writingPage >= writingPageCount - 1}
               aria-label="Next page"
-              className="rounded-full border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+              className="rounded-lg border border-zinc-200 p-1.5 text-zinc-500 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-30 disabled:hover:border-zinc-200 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 18l6-6-6-6" />
@@ -214,7 +214,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
       <div className="mb-4 flex flex-wrap items-center gap-1.5">
         <button
           onClick={() => setSkillFilterOpen((v) => !v)}
-          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
+          className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-0.5 text-xs font-medium transition-colors ${
             skillFilterOpen
               ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
               : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
@@ -231,7 +231,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
               setWritingSkill(null);
               setWritingPage(0);
             }}
-            className="inline-flex items-center gap-1 rounded-full border border-[#FF8225] bg-[#FF8225]/10 px-2.5 py-0.5 text-[11px] font-medium text-[#FF8225]"
+            className="inline-flex items-center gap-1 rounded-md border border-[#FF8225] bg-[#FF8225]/10 px-2.5 py-0.5 text-xs font-medium text-[#FF8225]"
           >
             {writingSkill}
             <span aria-hidden>×</span>
@@ -245,7 +245,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
               setWritingSkill(null);
               setWritingPage(0);
             }}
-            className={chipClass(!writingSkill).replace("py-1", "py-0.5 text-[11px]")}
+            className={chipClass(!writingSkill).replace("py-1", "py-0.5")}
           >
             {t.allSkills}
           </button>
@@ -256,7 +256,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
                 setWritingSkill(writingSkill === skill.label ? null : skill.label);
                 setWritingPage(0);
               }}
-              className={chipClass(writingSkill === skill.label).replace("py-1", "py-0.5 text-[11px]")}
+              className={chipClass(writingSkill === skill.label).replace("py-1", "py-0.5")}
             >
               {skill.label}
             </button>
@@ -277,7 +277,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
 
   const projectsSection = (
     <section>
-      <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+      <h2 className="mb-6 text-sm font-medium text-zinc-500">
         {t.projects}
       </h2>
       <p className="mb-3 text-xs text-zinc-400 dark:text-zinc-600">{t.projectPreviewHint}</p>
@@ -307,7 +307,6 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
           <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mb-4 flex items-center gap-2">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
               </span>
               <span className="text-xs text-zinc-400 dark:text-zinc-600">
@@ -320,7 +319,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
                   {pinging ? (
                     spinner
                   ) : (
-                    <span key={`ms-${pingTick}`} className="animate-value-in text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">
+                    <span key={`ms-${pingTick}`} className="animate-value-in text-2xl font-medium font-mono tabular-nums text-zinc-900 dark:text-white">
                       {ping?.ok ? `${ping.ms}ms` : <span className="text-red-500 dark:text-red-400">—</span>}
                     </span>
                   )}
@@ -334,7 +333,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
                   ) : (
                     <span
                       key={`status-${pingTick}`}
-                      className={`animate-value-in text-2xl font-bold font-mono tabular-nums ${ping?.ok ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}
+                      className={`animate-value-in text-2xl font-medium font-mono tabular-nums ${ping?.ok ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}
                     >
                       {ping?.ok ? t.backendStatLive : "—"}
                     </span>
@@ -343,22 +342,22 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
                 <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatStatus}</div>
               </div>
               <div>
-                <div className="flex h-8 items-center text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.endpoints}</div>
+                <div className="flex h-8 items-center text-2xl font-medium font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.endpoints}</div>
                 <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatEndpoints}*</div>
               </div>
               <div>
-                <div className="flex h-8 items-center text-2xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.commits}</div>
+                <div className="flex h-8 items-center text-2xl font-medium font-mono tabular-nums text-zinc-900 dark:text-white">{selectedProject.commits}</div>
                 <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">{t.backendStatCommits}*</div>
               </div>
             </div>
-            <p className="mt-4 text-[11px] text-zinc-400 dark:text-zinc-600">* {t.snapshotNote}</p>
+            <p className="mt-4 text-xs text-zinc-400 dark:text-zinc-600">* {t.snapshotNote}</p>
           </div>
         );
       })()}
 
       {writing[0] && (
         <div className="mt-8">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">{t.writingNav}</h3>
+          <h3 className="mb-2 text-sm font-medium text-zinc-500">{t.writingNav}</h3>
           <Link
             href={`${basePathFor(writing[0].kind)}/${writing[0].post.slug}`}
             className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
@@ -387,7 +386,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
       <div className="mx-auto max-w-3xl px-6 py-16">
         {notFound && (
           <div className="mb-6 flex justify-center animate-fade-in">
-            <div className="inline-flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 dark:border-red-700 dark:bg-red-950 dark:text-red-300">
+            <div className="inline-flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 dark:border-red-700 dark:bg-red-950 dark:text-red-300">
               <span>✕</span>
               <span><span className="text-red-500 dark:text-red-400">{notFound}.sacenpapier.org</span> {t.notFoundSuffix}</span>
             </div>
@@ -400,7 +399,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
         <div className="mb-8 flex flex-wrap items-center gap-2">
           <button
             onClick={() => setActiveView("projects")}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+            className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
               activeView === "projects"
                 ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
@@ -414,7 +413,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
               e.preventDefault();
               setActiveView(activeView === "infrastructure" ? "projects" : "infrastructure");
             }}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+            className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
               activeView === "infrastructure"
                 ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
@@ -428,7 +427,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
               e.preventDefault();
               setActiveView(activeView === "homelabDocs" ? "projects" : "homelabDocs");
             }}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+            className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
               activeView === "homelabDocs"
                 ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
@@ -438,7 +437,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
           </Link>
           <button
             onClick={() => setActiveView(activeView === "writing" ? "projects" : "writing")}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+            className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
               activeView === "writing"
                 ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
@@ -452,7 +451,7 @@ export function Hub({ writing }: { writing: WritingEntry[] }) {
               e.preventDefault();
               setActiveView(activeView === "about" ? "projects" : "about");
             }}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+            className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
               activeView === "about"
                 ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
                 : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"

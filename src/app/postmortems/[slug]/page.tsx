@@ -57,7 +57,7 @@ export default async function PostmortemPage({
             <span className="text-zinc-400 dark:text-zinc-700">·</span>
             <span>{postmortem.duration}</span>
           </div>
-          <h1 className="mb-4 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">
+          <h1 className="mb-4 text-2xl font-medium text-zinc-900 dark:text-white">
             {postmortem.title}
           </h1>
           <div className="flex flex-wrap gap-2">
@@ -75,7 +75,7 @@ export default async function PostmortemPage({
         <div className="flex flex-col gap-8">
           {postmortem.sections.map((section) => (
             <section key={section.label}>
-              <h2 className="mb-2 text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-600">
+              <h2 className="mb-2 text-sm font-medium text-zinc-500 dark:text-zinc-600">
                 {section.label}
               </h2>
               <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{section.body}</p>
@@ -85,7 +85,7 @@ export default async function PostmortemPage({
 
         {related.length > 0 && (
           <section className="mt-16 border-t border-zinc-200 pt-8 dark:border-zinc-900">
-            <h2 className="mb-4 text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-600">
+            <h2 className="mb-4 text-sm font-medium text-zinc-500 dark:text-zinc-600">
               More postmortems
             </h2>
             <div className="flex flex-col gap-3">

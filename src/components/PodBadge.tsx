@@ -22,7 +22,7 @@ export function PodBadge() {
     <div className="flex flex-col items-center gap-2">
       <p className="text-xs text-zinc-500 dark:text-zinc-600">Served by Kubernetes pod</p>
       <div className="flex items-center gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-500">
+        <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-500">
           <span className={`h-1.5 w-1.5 rounded-full ${loading ? "bg-yellow-500 animate-pulse" : "bg-green-500"}`} />
           {pod ?? "—"}
         </span>
@@ -30,7 +30,7 @@ export function PodBadge() {
           onClick={fetchPod}
           disabled={loading}
           title="Refresh pod"
-          className="rounded-full border border-zinc-200 bg-zinc-50 p-1.5 text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-40 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-300"
+          className="rounded-lg border border-zinc-200 bg-zinc-50 p-1.5 text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-40 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-300"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

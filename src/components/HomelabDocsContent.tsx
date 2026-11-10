@@ -196,7 +196,7 @@ export function HomelabDocsContent() {
   }
 
   function pillClass(id: string) {
-    return `rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+    return `rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
       activeId === id
         ? "border-[#FF8225] bg-[#FF8225] text-zinc-950"
         : "border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
@@ -256,7 +256,7 @@ export function HomelabDocsContent() {
             if (!visible.length) return null;
             return (
               <div key={section}>
-                <div className="mb-1 mt-3 px-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 first:mt-0 dark:text-zinc-600">
+                <div className="mb-1 mt-3 px-2 text-xs font-medium text-zinc-400 first:mt-0 dark:text-zinc-600">
                   {section}
                 </div>
                 {visible.map((g) => {
@@ -277,8 +277,8 @@ export function HomelabDocsContent() {
                         }
                         className={`block rounded-md px-2 py-1.5 text-xs transition-colors ${
                           activeId === g.id
-                            ? "bg-[#FF8225]/10 font-semibold text-[#FF8225]"
-                            : "font-semibold text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                            ? "bg-[#FF8225]/10 font-medium text-[#FF8225]"
+                            : "font-medium text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-900"
                         }`}
                       >
                         {g.label}
@@ -295,7 +295,7 @@ export function HomelabDocsContent() {
                                 ref={(el) => {
                                   navLinkRefs.current[s.id] = el;
                                 }}
-                                className={`rounded-md px-2 py-1 text-[11px] transition-colors ${
+                                className={`rounded-md px-2 py-1 text-xs transition-colors ${
                                   activeId === s.id
                                     ? "bg-[#FF8225]/10 font-medium text-[#FF8225]"
                                     : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-500 dark:hover:bg-zinc-900 dark:hover:text-zinc-200"
@@ -345,19 +345,19 @@ export function HomelabDocsContent() {
         if (!deviceMatches(dev.model, items)) return null;
         return (
           <section key={dev.model} id={deviceId(i)} ref={registerDevice} className="mb-12 scroll-mt-20 border-t border-zinc-200 pt-6 first:border-t-0 first:pt-0 dark:border-zinc-800">
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">{dev.model}</h3>
+            <h3 className="text-lg font-medium text-zinc-900 dark:text-white">{dev.model}</h3>
             {dev.os && <div className="mb-2 text-xs text-zinc-400 dark:text-zinc-600">{dev.os}</div>}
             <p className="mb-2 text-sm italic text-zinc-500 dark:text-zinc-500">{dev.why}</p>
             {dev.network && (
               <div
                 className="mb-5 rounded-lg bg-zinc-50 px-4 py-3 text-sm text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400"
-                dangerouslySetInnerHTML={{ __html: `<b class="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-600">How it's wired</b>${linkify(dev.network)}` }}
+                dangerouslySetInnerHTML={{ __html: `<b class="mb-1 block text-xs font-medium text-zinc-400 dark:text-zinc-600">How it's wired</b>${linkify(dev.network)}` }}
               />
             )}
             {dev.subgroups
               ? dev.subgroups.map((sg) => (
                   <div key={sg.name}>
-                    <div className="mb-2 mt-5 text-[11px] font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-600">{sg.name}</div>
+                    <div className="mb-2 mt-5 text-xs font-medium text-zinc-400 dark:text-zinc-600">{sg.name}</div>
                     {sg.items
                       .filter((it) => !q || it.name.toLowerCase().includes(q) || dev.model.toLowerCase().includes(q))
                       .map((it) => (
@@ -375,7 +375,7 @@ export function HomelabDocsContent() {
       {/* Production */}
       <SectionHeading>Production</SectionHeading>
       <section id="dev-production" ref={registerDevice} className="mb-12 scroll-mt-20 border-t border-zinc-200 pt-6 dark:border-zinc-800">
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Production</h3>
+        <h3 className="text-lg font-medium text-zinc-900 dark:text-white">Production</h3>
         <p className="mb-5 text-sm italic text-zinc-500 dark:text-zinc-500">{production.why}</p>
         {production.items
           .filter((it) => !q || it.name.toLowerCase().includes(q))
@@ -387,7 +387,7 @@ export function HomelabDocsContent() {
       {/* Integrations */}
       <SectionHeading>Integrations</SectionHeading>
       <section id="dev-integrations" ref={registerDevice} className="mb-12 scroll-mt-20 border-t border-zinc-200 pt-6 dark:border-zinc-800">
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Integrations</h3>
+        <h3 className="text-lg font-medium text-zinc-900 dark:text-white">Integrations</h3>
         <p className="mb-5 text-sm italic text-zinc-500 dark:text-zinc-500">
           The connective layer: not a device, not an app, but what lets everything above actually talk to each other and the outside world.
         </p>
@@ -395,11 +395,11 @@ export function HomelabDocsContent() {
           .filter((it) => !q || it.name.toLowerCase().includes(q))
           .map((it) => (
             <div key={it.slug} id={`int-${it.slug}`} ref={registerSpecific} className="mb-6 scroll-mt-20">
-              <h4 className="text-sm font-semibold text-zinc-900 dark:text-white">{it.name}</h4>
+              <h4 className="text-sm font-medium text-zinc-900 dark:text-white">{it.name}</h4>
               <p className="mb-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{it.detail}</p>
               {it.usedIn.length > 0 && (
                 <div className="text-xs text-zinc-400 dark:text-zinc-600">
-                  <b className="mb-1 block font-semibold uppercase tracking-wide">Used in the homelab</b>
+                  <b className="mb-1 block font-medium">Used in the homelab</b>
                   {it.usedIn.map((u) => (
                     <a key={u.href} href={u.href} className="mr-3 text-[#FF8225] hover:underline">
                       {u.label}
@@ -425,7 +425,7 @@ export function HomelabDocsContent() {
 
 function SectionHeading({ children }: { children: string }) {
   return (
-    <h2 className="mb-4 mt-10 text-xs font-semibold uppercase tracking-widest text-zinc-500 first:mt-0">{children}</h2>
+    <h2 className="mb-4 mt-10 text-sm font-medium text-zinc-500 first:mt-0">{children}</h2>
   );
 }
 
@@ -438,7 +438,7 @@ function ServiceBlock({
 }) {
   return (
     <div id={`svc-${item.slug}`} ref={registerRef} className="mb-5 scroll-mt-20">
-      <h4 className="text-sm font-semibold text-zinc-900 dark:text-white">{item.name}</h4>
+      <h4 className="text-sm font-medium text-zinc-900 dark:text-white">{item.name}</h4>
       <p
         className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400"
         dangerouslySetInnerHTML={{ __html: linkify(item.detail) }}

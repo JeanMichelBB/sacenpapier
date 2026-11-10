@@ -11,9 +11,9 @@ type Props = {
 };
 
 const statusLabel = {
-  live: { label: "Live", className: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20" },
-  wip: { label: "WIP", className: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20" },
-  archived: { label: "Archived", className: "bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 border-zinc-500/20" },
+  live: { label: "Live", dot: "bg-green-500" },
+  wip: { label: "WIP", dot: "bg-yellow-500" },
+  archived: { label: "Archived", dot: "bg-zinc-400" },
 };
 
 export function ProjectCard({ project, selected, onSelect, hideStatus, liveLabel, sourceLabel }: Props) {
@@ -29,9 +29,10 @@ export function ProjectCard({ project, selected, onSelect, hideStatus, liveLabel
     >
       <button onClick={onSelect} className="w-full p-4 text-left">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <span className="font-semibold text-zinc-900 dark:text-white">{project.name}</span>
+          <span className="font-medium text-zinc-900 dark:text-white">{project.name}</span>
           {!hideStatus && (
-            <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${status.className}`}>
+            <span className="inline-flex shrink-0 items-center gap-1.5 text-xs text-zinc-500">
+              <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
               {status.label}
             </span>
           )}

@@ -51,11 +51,10 @@ export function SiteHeader(props: Props) {
             </Link>
           )}
           {props.title && (
-            <h1 className="mt-2 flex items-center gap-3 text-3xl font-bold tracking-tight">
+            <h1 className="mt-2 flex items-center gap-3 text-3xl font-medium">
               {props.title}
               {props.titleBadge && (
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
                 </span>
               )}
@@ -70,12 +69,12 @@ export function SiteHeader(props: Props) {
   return (
     <header className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="mb-2 flex items-center gap-3 text-3xl font-bold tracking-tight">
+        <h1 className="mb-2 flex items-center gap-3 text-3xl font-medium">
           sacenpapier.org
           <button
             onClick={() => setCrushed(true)}
             aria-label="sacenpapier easter egg"
-            className="shrink-0 transition-transform duration-150 hover:scale-110 active:scale-95"
+            className="shrink-0 transition-transform duration-150 active:scale-[0.97]"
           >
             <Image
               src={crushed ? "/img/Paper Bag Crush.png" : "/img/shopping-bag.png"}
