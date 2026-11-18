@@ -77,4 +77,19 @@ export const projects: Project[] = [
     endpoints: 79,
     commits: 86,
   },
+  {
+    name: "Debarras",
+    slug: "debarras",
+    description: {
+      en: "Sort your movie and TV backlog by swiping: watched, want to watch or not now. Free, passkey sign-in, TMDb data, FR/EN.",
+      fr: "Triez votre pile de films et séries en balayant: vu, à voir ou pas maintenant. Gratuit, connexion par passkey, données TMDb, FR/EN.",
+    },
+    url: "https://debarras.sacenpapier.org",
+    repoUrl: "https://github.com/JeanMichelBB/debarras",
+    tags: ["React", "FastAPI", "MySQL", "WebAuthn", "TMDb", "Docker"],
+    status: "live",
+    focus: ["full-stack", "backend"],
+    endpoints: 28,
+    commits: 18,
+  },
 ];

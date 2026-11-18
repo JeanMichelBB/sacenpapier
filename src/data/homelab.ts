@@ -343,22 +343,28 @@ export const production = {
     {
       slug: "x-app",
       name: "x",
-      detail: "One of the 4 portfolio apps, own GitHub repo and its own Doppler secrets project, frontend + backend deployed separately in the default namespace.",
+      detail: "One of the 5 portfolio apps, own GitHub repo and its own Doppler secrets project, frontend + backend deployed separately in the default namespace.",
     },
     {
       slug: "poproom",
       name: "PopRoom",
-      detail: "Portfolio app, own repo + Doppler project, same frontend/backend split and deploy pattern as the other three.",
+      detail: "Portfolio app, own repo + Doppler project, same frontend/backend split and deploy pattern as the other four.",
     },
     {
       slug: "botwhy",
       name: "BotWhy",
-      detail: "Portfolio app, own repo + Doppler project, same frontend/backend split and deploy pattern as the other three.",
+      detail: "Portfolio app, own repo + Doppler project, same frontend/backend split and deploy pattern as the other four.",
     },
     {
       slug: "apercu",
       name: "Aperçu",
-      detail: "Portfolio app, own repo + Doppler project, same frontend/backend split and deploy pattern as the other three.",
+      detail: "Portfolio app, own repo + Doppler project, same frontend/backend split and deploy pattern as the other four.",
+    },
+    {
+      slug: "debarras",
+      name: "Debarras",
+      detail:
+        "Portfolio app added in November 2026: sort a movie and TV backlog by swiping cards (watched, want to watch, not now), with TMDb as the data source, passkey-only sign-in (WebAuthn, no email or password) and a French/English UI. Own repo + Doppler project, same frontend/backend split and deploy pattern as the other four, with its own database on the shared MySQL. Its health check lives at /health on the API host rather than /api/health like the others.",
     },
     {
       slug: "homelab-dashboard",
@@ -436,6 +442,7 @@ export const integrations: Integration[] = [
       { href: "#svc-poproom", label: "PopRoom" },
       { href: "#svc-botwhy", label: "BotWhy" },
       { href: "#svc-apercu", label: "Aperçu" },
+      { href: "#svc-debarras", label: "Debarras" },
     ],
   },
   {

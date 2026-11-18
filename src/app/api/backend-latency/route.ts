@@ -5,6 +5,7 @@ const ENDPOINTS = [
   { name: "PopRoom", url: "https://poproomapi.sacenpapier.org/api/health" },
   { name: "BotWhy", url: "https://botwhyapi.sacenpapier.org/api/health" },
   { name: "Aperçu", url: "https://apercuapi.sacenpapier.org/api/health" },
+  { name: "Debarras", url: "https://debarrasapi.sacenpapier.org/health" },
 ];
 
 export async function GET() {

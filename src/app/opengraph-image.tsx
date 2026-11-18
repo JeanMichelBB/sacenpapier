@@ -35,7 +35,7 @@ export default async function Image() {
           A collection of personal projects: web apps, infra, and experiments.
         </div>
         <div style={{ display: "flex", gap: 16, marginTop: 48 }}>
-          {["x", "PopRoom", "BotWhy", "Aperçu"].map((name) => (
+          {["x", "PopRoom", "BotWhy", "Aperçu", "Debarras"].map((name) => (
             <div
               key={name}
               style={{
